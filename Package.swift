@@ -41,7 +41,8 @@ let package = Package(
         .product(name: "ZIPFoundation", package: "ZIPFoundation"),
         .product(name: "SWCompression", package: "SWCompression"),
         .product(name: "PLzmaSDK", package: "PLzmaSDK")
-      ]
+      ],
+      resources: [.copy("Resources")]
     ),
     .executableTarget(
       name: "ComicBookCLI",

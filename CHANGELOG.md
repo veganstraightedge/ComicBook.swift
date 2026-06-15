@@ -17,12 +17,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   full archive / extract / pages / info. Archiving is images-only, matching the gem.
 - **CB7** adapter (PLzmaSDK — bundled LZMA SDK, **no system 7-Zip / Homebrew needed**): archive,
   extract, pages, info. Read and write.
+- **CBR** adapter (read-only) via **bundled** `lsar`/`unar` (The Unarchiver, MPL) — pages, info,
+  extract, with **no user install**. macOS only (process spawning). `ComicBook.rarToolsDirectory`
+  lets a sandboxed app point at its own code-signed copies.
 - **PDF** adapter (CoreGraphics + ImageIO): list pages and extract each page to a JPEG (extract-only).
 - **CLI** (`comicbook`, swift-argument-parser): `extract`, `archive`, `info`
   (verbose / terse / json / yaml, with `--only` / `--except`), `pages`, `version`.
 
 ### Pending
 
-- CBR (`lsar`/`unar`, read-only) adapter is stubbed and throws "not yet ported".
-  CBA (ACE) is unsupported, matching the gem.
+- CBA (ACE) is unsupported, matching the gem. All other formats are implemented.
 - See `PLAN.md` and the umbrella `TODO.md` for the remaining work and open decisions.
