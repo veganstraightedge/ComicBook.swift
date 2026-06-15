@@ -1,5 +1,16 @@
 # ComicBook.swift — Build Plan
 
+> **STATUS — EXECUTED / largely complete (see CHANGELOG.md + ../TODO.md for the authoritative state).**
+> All formats are implemented and committed (26 tests green): CB/folder, CBZ, CBT, CB7, CBR, PDF
+> (CBA intentionally unimplemented). **Zero system/Homebrew deps.** Notable changes from this
+> original plan during the build:
+> - **CB7**: now **PLzmaSDK** (bundled LZMA SDK, read+write) — NOT the planned "SWCompression read +
+>   `7zz` shell-out". Pinned to commit `f449bc3…` (1.6.1) due to PLzmaSDK's unsafe-flags SPM rule.
+> - **CBR**: **bundled** `lsar`/`unar` (vendored, MPL, no user install) — not a system shell-out.
+>   macOS-only; `ComicBook.rarToolsDirectory` override for sandboxed apps.
+> - **PDF**: CoreGraphics/ImageIO (the plan already noted PDFKit-family over libvips).
+> The sections below are the original pre-build plan, kept for context.
+
 Swift port of the Ruby `comicbook` gem (v0.3.0), matching ComicInfo.swift's style/arch/testing.
 **Working solo + autonomously. All commits on `main`. No pushes, no PRs.** Decisions that need
 review are logged in the umbrella `../TODO.md` under "ComicBook.swift".
