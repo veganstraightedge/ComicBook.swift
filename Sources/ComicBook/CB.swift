@@ -18,16 +18,15 @@ struct CB: ComicBookAdapter {
   func pages() throws -> [ComicBook.Page] {
     let fileManager = FileManager.default
     let baseURL = URL(fileURLWithPath: path).resolvingSymlinksInPath()
-    let basePath = baseURL.path
+    let baseComponentCount = baseURL.pathComponents.count
     guard let enumerator = fileManager.enumerator(at: baseURL, includingPropertiesForKeys: nil) else {
       return []
     }
 
-    let prefix = basePath.hasSuffix("/") ? basePath : basePath + "/"
     var relativePaths: [String] = []
     for case let url as URL in enumerator where ComicBook.isImageFile(url.lastPathComponent) {
-      let relative = url.path.hasPrefix(prefix) ? String(url.path.dropFirst(prefix.count)) : url.lastPathComponent
-      relativePaths.append(relative)
+      let relativeComponents = url.resolvingSymlinksInPath().pathComponents.dropFirst(baseComponentCount)
+      relativePaths.append(relativeComponents.joined(separator: "/"))
     }
 
     return relativePaths.sorted().map { ComicBook.Page(path: $0, name: ($0 as NSString).lastPathComponent) }
