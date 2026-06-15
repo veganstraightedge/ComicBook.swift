@@ -26,7 +26,10 @@ let package = Package(
     .package(path: "../ComicInfo.swift"),
     .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.8.2"),
     .package(url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.20"),
-    .package(url: "https://github.com/tsolomko/SWCompression.git", from: "4.9.1")
+    .package(url: "https://github.com/tsolomko/SWCompression.git", from: "4.9.1"),
+    // PLzmaSDK's C target uses unsafe build flags, so SPM forbids a version requirement.
+    // Pin the exact commit of tag 1.6.1 (reproducible) instead of tracking a branch.
+    .package(url: "https://github.com/OlehKulykov/PLzmaSDK.git", revision: "f449bc3e13204b68a7e05fca80ce8c31642085ec")
   ],
   targets: [
     // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -36,7 +39,8 @@ let package = Package(
       dependencies: [
         .product(name: "ComicInfo", package: "ComicInfo.swift"),
         .product(name: "ZIPFoundation", package: "ZIPFoundation"),
-        .product(name: "SWCompression", package: "SWCompression")
+        .product(name: "SWCompression", package: "SWCompression"),
+        .product(name: "PLzmaSDK", package: "PLzmaSDK")
       ]
     ),
     .executableTarget(
