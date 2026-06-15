@@ -3,18 +3,87 @@
 // ComicBook
 //
 
+import ComicInfo
 import Foundation
+import SWCompression
 
-/// Adapter for CBT archives. TODO: implementation in progress.
+/// Adapter for CBT (TAR) archives, backed by SWCompression.
 struct CBT: ComicBookAdapter {
   let path: String
-  init(path: String) { self.path = path }
-  func pages() throws -> [ComicBook.Page] { throw ComicBookError.notImplemented("CBT pages not yet ported") }
-  func info() throws -> ComicBook.Info? { throw ComicBookError.notImplemented("CBT info not yet ported") }
-  func archive(options: ComicBook.ArchiveOptions) throws -> String {
-    throw ComicBookError.notImplemented("CBT archive not yet ported")
+
+  init(path: String) {
+    self.path = path
   }
+
+  /// Image pages inside the archive, sorted by basename.
+  func pages() throws -> [ComicBook.Page] {
+    var pages: [ComicBook.Page] = []
+    for entry in try readEntries() where entry.info.type == .regular && ComicBook.isImageFile(entry.info.name) {
+      pages.append(ComicBook.Page(path: entry.info.name, name: (entry.info.name as NSString).lastPathComponent))
+    }
+    return pages.sorted { $0.name < $1.name }
+  }
+
+  /// Read `ComicInfo.xml` from the archive, if present.
+  func info() throws -> ComicBook.Info? {
+    guard let entry = try readEntries().first(where: { $0.info.name == "ComicInfo.xml" }),
+      let data = entry.data, let xml = String(data: data, encoding: .utf8)
+    else { return nil }
+    return try ComicInfo.load(fromXML: xml)
+  }
+
+  /// Create a CBT from the source folder's image files (images only). Returns the output path.
+  func archive(options: ComicBook.ArchiveOptions) throws -> String {
+    let output = ComicBook.defaultOutputPath(forSource: path, newExtension: "cbt", to: options.to)
+    guard !FileManager.default.fileExists(atPath: output) else {
+      throw ComicBookError.destinationExists(output)
+    }
+
+    do {
+      var entries: [TarEntry] = []
+      for image in ComicBook.imageFiles(in: URL(fileURLWithPath: path)) {
+        let data = try Data(contentsOf: image.fileURL)
+        entries.append(TarEntry(info: TarEntryInfo(name: image.relativePath, type: .regular), data: data))
+      }
+      try TarContainer.create(from: entries).write(to: URL(fileURLWithPath: output))
+    } catch {
+      throw ComicBookError.archiveError(error.localizedDescription)
+    }
+
+    if options.deleteOriginal { try? FileManager.default.removeItem(atPath: path) }
+    return output
+  }
+
+  /// Extract the archive into a folder (default `<basename>.cb`). Returns the destination path.
   func extract(options: ComicBook.ExtractOptions) throws -> String {
-    throw ComicBookError.notImplemented("CBT extract not yet ported")
+    let destination = ComicBook.defaultOutputPath(forSource: path, newExtension: "cb", to: options.to)
+    let destinationURL = URL(fileURLWithPath: destination)
+
+    do {
+      let entries = try readEntries()
+      try FileManager.default.createDirectory(at: destinationURL, withIntermediateDirectories: true)
+      for entry in entries where entry.info.type == .regular {
+        if options.imagesOnly && !ComicBook.isImageFile(entry.info.name) { continue }
+        let fileURL = destinationURL.appendingPathComponent(entry.info.name)
+        try FileManager.default.createDirectory(
+          at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try (entry.data ?? Data()).write(to: fileURL)
+      }
+    } catch let error as ComicBookError {
+      throw error
+    } catch {
+      throw ComicBookError.extractionError(error.localizedDescription)
+    }
+
+    if options.deleteOriginal { try? FileManager.default.removeItem(atPath: path) }
+    return destination
+  }
+
+  private func readEntries() throws -> [TarEntry] {
+    do {
+      return try TarContainer.open(container: try Data(contentsOf: URL(fileURLWithPath: path)))
+    } catch {
+      throw ComicBookError.extractionError("Could not read '\(path)': \(error.localizedDescription)")
+    }
   }
 }
