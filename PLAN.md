@@ -10,15 +10,15 @@ A library + CLI for comic-book archives. Top-level ops: **extract**, **archive**
 
 Format matrix (port targets):
 
-| Format | Ext | Mechanism (Ruby) | Swift approach | extract | archive | info | pages |
-|---|---|---|---|---|---|---|---|
-| CBZ | `.cbz` | rubyzip | **ZIPFoundation** 0.9.20 | ✅ | ✅ | ✅ | ✅ |
-| CBT | `.cbt` | stdlib TAR | **SWCompression** 4.9.1 (TarContainer) | ✅ | ✅ | ✅ | ✅ |
-| CB7 | `.cb7` | seven-zip (native) | SWCompression (read 7z) + shell `7zz` (write) | ✅ | ✅* | ✅ | ✅ |
-| CBR | `.cbr` | shell lsar/unar | shell `lsar`/`unar` (read-only) | ✅ | ❌ | ✅ | ✅ |
-| CB | `.cb` (folder) | uncompressed folder | FileManager | ❌(already) | ✅(move) | ✅ | ✅ |
-| PDF | `.pdf` | ruby-vips→jpg | **PDFKit + ImageIO** (native, no dep) | ✅ | ❌ | ⛔nil | ✅ |
-| CBA | `.cba` | stubs raise | stubs throw "not implemented" | ❌ | ❌ | ❌ | ❌ |
+| Format | Ext            | Mechanism (Ruby)    | Swift approach                                | extract     | archive  | info  | pages |
+| ------ | -------------- | ------------------- | --------------------------------------------- | ----------- | -------- | ----- | ----- |
+| CBZ    | `.cbz`         | rubyzip             | **ZIPFoundation** 0.9.20                      | ✅          | ✅       | ✅    | ✅    |
+| CBT    | `.cbt`         | stdlib TAR          | **SWCompression** 4.9.1 (TarContainer)        | ✅          | ✅       | ✅    | ✅    |
+| CB7    | `.cb7`         | seven-zip (native)  | SWCompression (read 7z) + shell `7zz` (write) | ✅          | ✅\*     | ✅    | ✅    |
+| CBR    | `.cbr`         | shell lsar/unar     | shell `lsar`/`unar` (read-only)               | ✅          | ❌       | ✅    | ✅    |
+| CB     | `.cb` (folder) | uncompressed folder | FileManager                                   | ❌(already) | ✅(move) | ✅    | ✅    |
+| PDF    | `.pdf`         | ruby-vips→jpg       | **PDFKit + ImageIO** (native, no dep)         | ✅          | ❌       | ⛔nil | ✅    |
+| CBA    | `.cba`         | stubs raise         | stubs throw "not implemented"                 | ❌          | ❌       | ❌    | ❌    |
 
 `*` CB7 write shells out to `7zz` (installed at /opt/homebrew/bin). If absent → throw with install hint.
 
@@ -86,15 +86,15 @@ Sources/ComicBookCLI/
 ## CLI (subcommands, argument-parser)
 
 `comicbook extract <input> [--to] [--dpi] [--images-only] [--delete-original]`
-`comicbook archive <folder> [--to] [--delete-original]`  (reject .cbr/.cba targets)
+`comicbook archive <folder> [--to] [--delete-original]` (reject .cbr/.cba targets)
 `comicbook info <input> [--format verbose|terse|json|yaml] [--only F,F] [--except F,F]`
-`comicbook pages <input>`  (gem exposes pages via lib; add a CLI subcommand for parity/utility)
-`comicbook version`  + auto `--help`/`--version`.
+`comicbook pages <input>` (gem exposes pages via lib; add a CLI subcommand for parity/utility)
+`comicbook version` + auto `--help`/`--version`.
 Decision: add `pages` as a CLI subcommand (gem has it on the library; surfacing it is useful) — logged in TODO.
 
 ## Build order (commit each milestone, build+test green between)
 
-1. ✅ repo + PLAN.md  ← (this commit)
+1. ✅ repo + PLAN.md ← (this commit)
 2. Scaffold: Package.swift, configs, CI, scripts, docs, empty Sources/Tests that compile.
 3. Core: ComicBook namespace, Error, Version, Page, Adapter, ImageFile, Info, type detection. Tests.
 4. CB (folder) adapter. Tests + fixtures.
