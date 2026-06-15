@@ -43,6 +43,7 @@ let package = Package(
       name: "ComicBookCLI",
       dependencies: [
         "ComicBook",
+        .product(name: "ComicInfo", package: "ComicInfo.swift"),
         .product(name: "ArgumentParser", package: "swift-argument-parser")
       ]
     ),
