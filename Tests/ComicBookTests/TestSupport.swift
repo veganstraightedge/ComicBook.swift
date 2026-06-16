@@ -17,7 +17,9 @@ func tempPath(extension ext: String) -> String {
   FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).\(ext)").path
 }
 
-/// Run a command-line tool (used to build zip/tar fixtures in tests). Returns its exit status.
+/// Run a command-line tool (used to build zip/tar fixtures in tests).
+///
+/// Returns its exit status.
 @discardableResult
 func runTool(_ launchPath: String, _ arguments: [String], cwd: URL? = nil) throws -> Int32 {
   let process = Process()

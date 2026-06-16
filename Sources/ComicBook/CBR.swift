@@ -6,8 +6,10 @@
 import ComicInfo
 import Foundation
 
-/// Adapter for CBR (RAR) archives. Read-only (RAR creation is proprietary), via the bundled
-/// `lsar`/`unar` (macOS only — process spawning is unavailable in the iOS/tvOS/watchOS sandbox).
+/// Adapter for CBR (RAR) archives.
+///
+/// Read-only (RAR creation is proprietary), via the bundled `lsar`/`unar` (macOS only — process
+/// spawning is unavailable in the iOS/tvOS/watchOS sandbox).
 struct CBR: ComicBookAdapter {
   let path: String
 
@@ -37,7 +39,9 @@ struct CBR: ComicBookAdapter {
       return try ComicInfo.load(from: xmlPath)
     }
 
-    /// Extract the archive into a folder (default `<basename>.cb`). Returns the destination path.
+    /// Extract the archive into a folder (default `<basename>.cb`).
+    ///
+    /// Returns the destination path.
     func extract(options: ComicBook.ExtractOptions) throws -> String {
       let destination = ComicBook.defaultOutputPath(forSource: path, newExtension: "cb", to: options.to)
       do {

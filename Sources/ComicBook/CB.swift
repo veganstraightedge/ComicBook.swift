@@ -35,7 +35,9 @@ struct CB: ComicBookAdapter {
     return try ComicInfo.load(from: xmlPath)
   }
 
-  /// Archive a folder into a `.cb` folder by moving it (uncompressed). Returns the destination.
+  /// Archive a folder into a `.cb` folder by moving it (uncompressed).
+  ///
+  /// Returns the destination.
   func archive(options: ComicBook.ArchiveOptions) throws -> String {
     let output = ComicBook.defaultOutputPath(forSource: path, newExtension: "cb", to: options.to)
     guard !FileManager.default.fileExists(atPath: output) else {
