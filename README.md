@@ -1,14 +1,20 @@
 # ComicBook.swift
 
-A Swift package and CLI for reading, extracting, archiving, and inspecting comic book archives —
-the Swift port of the Ruby [`comicbook`](https://github.com/veganstraightedge/comicbook) gem.
+A Swift package and CLI for reading, extracting, archiving, and inspecting comic book archives.
+
+A [`comicbook`](https://github.com/veganstraightedge/comicbook) Ruby gem is also available.
+
+![Swift](https://img.shields.io/badge/swift-6.2%2B-orange.svg)
+![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20iOS-lightgrey.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 ⚠️ Under construction.
 
 ## Features
 
 - 📦 Read / extract / archive comic book archives: **`.cbz`**, **`.cbt`**, **`.cb`** folders.
-- 🔎 List image **pages** and read **`ComicInfo.xml`** metadata (via ComicInfo.swift).
+- 🔎 List image **pages** and read **`ComicInfo.xml`** metadata
+  (via [ComicInfo.swift](https://github.com/veganstraightedge/ComicInfo.swift)).
 - 🧰 A `comicbook` command-line tool.
 - 🚧 In progress: **`.cb7`** (7-Zip), **`.cbr`** (RAR, read-only), and **PDF**→images. `.cba` (ACE) unsupported.
 
@@ -48,10 +54,10 @@ Archiving includes image files only (matching the gem); extraction is lossless u
 
 ## CLI
 
-```
-comicbook extract <input> [--to <path>] [--dpi <n>] [--images-only] [--delete-original]
+```sh
+comicbook extract <input>  [--to <path>] [--dpi <n>] [--images-only] [--delete-original]
 comicbook archive <folder> [--to <path>] [--delete-original]
-comicbook info    <input> [--format verbose|terse|json|yaml] [--only F,F] [--except F,F]
+comicbook info    <input>  [--format verbose|terse|json|yaml] [--only F,F] [--except F,F]
 comicbook pages   <input>
 comicbook version
 ```
