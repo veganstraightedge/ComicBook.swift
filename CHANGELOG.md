@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial Swift port of the Ruby `comicbook` gem, mirroring ComicInfo.swift's architecture.
+  Requires Swift 6.3+ (`swift-tools-version: 6.3`).
 - **Core**: `ComicBook` namespace, `ComicBook.Comic` (load + type detection), `ComicBook.Page`,
   `ComicBook.Info` (= `ComicInfo.Issue`), and `ComicBookError`.
 - **Operations**: `extract`, `archive`, `pages`, `info` across formats via a `ComicBookAdapter`.

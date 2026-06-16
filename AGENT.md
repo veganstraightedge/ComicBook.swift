@@ -10,7 +10,7 @@ Dev-process and architecture notes for ComicBook.swift. Mirrors ComicInfo.swift'
 
 ## Development
 
-- Swift 6.2+, Swift Testing (not XCTest), `swift format` (2-space, `.swift-format`).
+- Swift 6.3+, Swift Testing (not XCTest), `swift format` (2-space, `.swift-format`).
 - `swift build` / `swift test` / `swift format lint --recursive Sources Tests`.
 - One type per file; file header `//\n// File.swift\n// ComicBook\n//`.
 

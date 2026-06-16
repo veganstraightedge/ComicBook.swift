@@ -4,7 +4,7 @@ A Swift package and CLI for reading, extracting, archiving, and inspecting comic
 
 A [`comicbook`](https://github.com/veganstraightedge/comicbook) Ruby gem is also available.
 
-![Swift](https://img.shields.io/badge/swift-6.2%2B-orange.svg)
+![Swift](https://img.shields.io/badge/swift-6.3%2B-orange.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20iOS-lightgrey.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
@@ -20,7 +20,7 @@ A [`comicbook`](https://github.com/veganstraightedge/comicbook) Ruby gem is also
 
 ## Requirements
 
-- Swift 6.2+
+- Swift 6.3+
 - macOS 26+ / iOS 26+ (archiving/extracting shell-outs for CB7/CBR are macOS-only)
 
 ## Installation
