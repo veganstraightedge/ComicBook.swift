@@ -11,10 +11,6 @@ import Foundation
 struct CBR: ComicBookAdapter {
   let path: String
 
-  init(path: String) {
-    self.path = path
-  }
-
   func archive(options: ComicBook.ArchiveOptions) throws -> String {
     throw ComicBookError.notSupported("CBR archiving not supported (RAR is proprietary)")
   }

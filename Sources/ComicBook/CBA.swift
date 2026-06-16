@@ -9,7 +9,6 @@ import Foundation
 /// matching the Ruby gem's stubs.
 struct CBA: ComicBookAdapter {
   let path: String
-  init(path: String) { self.path = path }
   func pages() throws -> [ComicBook.Page] { throw ComicBookError.notImplemented("CBA page listing not yet implemented") }
   func info() throws -> ComicBook.Info? { throw ComicBookError.notImplemented("CBA info not yet implemented") }
   func archive(options: ComicBook.ArchiveOptions) throws -> String {

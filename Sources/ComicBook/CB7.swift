@@ -11,10 +11,6 @@ import PLzmaSDK
 struct CB7: ComicBookAdapter {
   let path: String
 
-  init(path: String) {
-    self.path = path
-  }
-
   /// Image pages inside the archive, sorted by basename.
   func pages() throws -> [ComicBook.Page] {
     let (decoder, count) = try openDecoder()
