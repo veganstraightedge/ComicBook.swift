@@ -27,4 +27,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Pending
 
 - CBA (ACE) is unsupported, matching the gem. All other formats are implemented.
-- See `PLAN.md` and the umbrella `TODO.md` for the remaining work and open decisions.
+- See the umbrella `PLAN.md` and `TODO.md` for the remaining work and open decisions.

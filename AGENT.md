@@ -46,4 +46,4 @@ Dev-process and architecture notes for ComicBook.swift. Mirrors ComicInfo.swift'
 
 ## Status & plan
 
-See `PLAN.md` (full build plan + open decisions) and the umbrella `../TODO.md`.
+See the umbrella `../PLAN.md` (full build plan + open decisions) and `../TODO.md`.
