@@ -25,7 +25,9 @@ public enum ComicBook {
     try Comic(path: path).archive(options: options)
   }
 
-  /// Extract the archive at `path` into a folder. Returns the destination path.
+  /// Extract the archive at `path` into a folder.
+  ///
+  /// Returns the destination path.
   @discardableResult
   public static func extract(_ path: String, options: ExtractOptions = ExtractOptions()) throws -> String {
     try Comic(path: path).extract(options: options)
@@ -73,7 +75,9 @@ extension ComicBook {
       return try adapter().info()
     }
 
-    /// Extract this archive into a folder. Returns the destination path.
+    /// Extract this archive into a folder.
+    ///
+    /// Returns the destination path.
     @discardableResult
     public func extract(options: ExtractOptions = ExtractOptions()) throws -> String {
       switch type {

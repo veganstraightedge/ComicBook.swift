@@ -12,6 +12,7 @@ import Foundation
 #endif
 
 /// Adapter for PDF files: extract-only, rendering each page to a JPEG (`page_001.jpg`, 1-indexed).
+///
 /// PDFs never carry ComicInfo metadata, so `info` is always nil.
 struct PDF: ComicBookAdapter {
   let path: String

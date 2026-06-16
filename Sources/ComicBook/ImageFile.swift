@@ -16,7 +16,9 @@ extension ComicBook {
   }
 
   /// Recursively collect image files under `directory` as `(relativePath, fileURL)` pairs, sorted by
-  /// relative path. Used by the archivers (archiving includes images only, matching the Ruby gem).
+  /// relative path.
+  ///
+  /// Used by the archivers (archiving includes images only, matching the Ruby gem).
   static func imageFiles(in directory: URL) -> [(relativePath: String, fileURL: URL)] {
     let fileManager = FileManager.default
     let base = directory.resolvingSymlinksInPath()

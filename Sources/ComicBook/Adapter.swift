@@ -53,7 +53,9 @@ extension ComicBook {
   }
 }
 
-/// A per-format handler for a comic book source. Internal; one concrete type per `ArchiveType`.
+/// A per-format handler for a comic book source.
+///
+/// Internal; one concrete type per `ArchiveType`.
 protocol ComicBookAdapter {
   init(path: String)
   func pages() throws -> [ComicBook.Page]

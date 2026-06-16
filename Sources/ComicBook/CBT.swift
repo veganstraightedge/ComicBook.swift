@@ -28,7 +28,9 @@ struct CBT: ComicBookAdapter {
     return try ComicInfo.load(fromXML: xml)
   }
 
-  /// Create a CBT from the source folder's image files (images only). Returns the output path.
+  /// Create a CBT from the source folder's image files (images only).
+  ///
+  /// Returns the output path.
   func archive(options: ComicBook.ArchiveOptions) throws -> String {
     let output = ComicBook.defaultOutputPath(forSource: path, newExtension: "cbt", to: options.to)
     guard !FileManager.default.fileExists(atPath: output) else {
@@ -50,7 +52,9 @@ struct CBT: ComicBookAdapter {
     return output
   }
 
-  /// Extract the archive into a folder (default `<basename>.cb`). Returns the destination path.
+  /// Extract the archive into a folder (default `<basename>.cb`).
+  ///
+  /// Returns the destination path.
   func extract(options: ComicBook.ExtractOptions) throws -> String {
     let destination = ComicBook.defaultOutputPath(forSource: path, newExtension: "cb", to: options.to)
     let destinationURL = URL(fileURLWithPath: destination)
