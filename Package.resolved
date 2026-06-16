@@ -1,5 +1,5 @@
 {
-  "originHash" : "2f2e36b6e2ecf85bcdda231576fc63cf5a7f4730aa67f7fd34a6df6ddce1ce4e",
+  "originHash" : "f1b80c1db5c55fa5538f2f28d27b94897b0f39003e07c76f9aa2fc67c67b65e6",
   "pins" : [
     {
       "identity" : "bitbytedata",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "e1a5443be67daf0833cbb5f4fa3a06a265ca3105",
         "version" : "2.1.0"
+      }
+    },
+    {
+      "identity" : "comicinfo.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/veganstraightedge/ComicInfo.swift.git",
+      "state" : {
+        "revision" : "6b7e25ca5bc7eaeaefced0e9da6a58de80e5a201",
+        "version" : "1.1.0"
       }
     },
     {
