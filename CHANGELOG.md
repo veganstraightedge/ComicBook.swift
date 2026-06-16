@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-06-16
+
 ### Added
 
 - Initial Swift port of the Ruby `comicbook` gem, mirroring ComicInfo.swift's architecture.

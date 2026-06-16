@@ -1,5 +1,5 @@
 {
-  "originHash" : "f1b80c1db5c55fa5538f2f28d27b94897b0f39003e07c76f9aa2fc67c67b65e6",
+  "originHash" : "76a34f9cc1a5a126db808f4262307c2d2e0f9d7677205c48c0348fdda4cfcdb5",
   "pins" : [
     {
       "identity" : "bitbytedata",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/veganstraightedge/ComicInfo.swift.git",
       "state" : {
-        "revision" : "6b7e25ca5bc7eaeaefced0e9da6a58de80e5a201",
-        "version" : "1.1.0"
+        "revision" : "7bb4ae89130d1b63dff359d036622df7bd0f99e4",
+        "version" : "1.2.0"
       }
     },
     {
