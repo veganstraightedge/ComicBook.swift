@@ -10,10 +10,6 @@ import Foundation
 struct CB: ComicBookAdapter {
   let path: String
 
-  init(path: String) {
-    self.path = path
-  }
-
   /// Image pages as folder-relative paths, sorted by path.
   func pages() throws -> [ComicBook.Page] {
     let fileManager = FileManager.default

@@ -16,10 +16,6 @@ import Foundation
 struct PDF: ComicBookAdapter {
   let path: String
 
-  init(path: String) {
-    self.path = path
-  }
-
   /// PDFs never carry ComicInfo.xml.
   func info() throws -> ComicBook.Info? { nil }
 
