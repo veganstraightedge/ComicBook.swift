@@ -29,7 +29,7 @@ A [`comicbook`](https://github.com/veganstraightedge/comicbook) Ruby gem is also
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/veganstraightedge/ComicBook.swift.git", from: "0.1.0")
+  .package(url: "https://github.com/veganstraightedge/ComicBook.swift.git", from: "0.2.0")
 ]
 ```
 

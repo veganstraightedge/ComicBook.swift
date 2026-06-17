@@ -27,9 +27,10 @@ let package = Package(
     .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.8.2"),
     .package(url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.20"),
     .package(url: "https://github.com/tsolomko/SWCompression.git", from: "4.9.1"),
-    // PLzmaSDK's C target uses unsafe build flags, so SPM forbids a version requirement.
-    // Pin the exact commit of tag 1.6.1 (reproducible) instead of tracking a branch.
-    .package(url: "https://github.com/OlehKulykov/PLzmaSDK.git", revision: "f449bc3e13204b68a7e05fca80ce8c31642085ec"),
+    // Fork of PLzmaSDK with the `unsafeFlags` (-fPIC/-fno-rtti) removed, so it can be consumed by
+    // version. Upstream's flags forced a revision pin, which in turn made *this* package unconsumable
+    // via `from:` for downstream packages.
+    .package(url: "https://github.com/veganstraightedge/PLzmaSDK.git", from: "1.6.2"),
   ],
   targets: [
     // Targets are the basic building blocks of a package, defining a module or a test suite.
