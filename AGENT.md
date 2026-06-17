@@ -44,6 +44,6 @@ Dev-process and architecture notes for ComicBook.swift. Mirrors ComicInfo.swift'
 - Page `path`: archive → entry name; `.cb` → relative; top-level folder → absolute.
 - Image detection is extension-based, case-insensitive: `.jpg .jpeg .png .gif .bmp .webp`.
 
-## Status & plan
+## Status
 
-See the umbrella `../PLAN.md` (full build plan + open decisions) and `../TODO.md`.
+All formats are implemented (CBA/ACE intentionally unsupported, matching the gem). See `CHANGELOG.md`.

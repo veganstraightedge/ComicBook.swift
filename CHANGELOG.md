@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-17
+
+### Changed
+- **PLzmaSDK is now consumed by version, from a fork** ([veganstraightedge/PLzmaSDK](https://github.com/veganstraightedge/PLzmaSDK) `1.6.2`) with the `unsafeFlags` (`-fPIC`/`-fno-rtti`) removed. Those flags forced a `revision:` pin on PLzmaSDK, which made **ComicBook.swift itself unconsumable via `from:`** by downstream packages (SPM rejects depending by version on a package with a revision-pinned/unstable dependency). With the fork, ComicBook resolves cleanly via `from:`. No CB7 behavior change — read and write are unchanged.
+
 ## [0.1.0] - 2026-06-16
 
 ### Added
@@ -30,4 +35,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Pending
 
 - CBA (ACE) is unsupported, matching the gem. All other formats are implemented.
-- See the umbrella `PLAN.md` and `TODO.md` for the remaining work and open decisions.
