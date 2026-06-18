@@ -39,16 +39,29 @@ extension ComicBook {
     }
   }
 
+  /// Which files from a source folder get written into an archive.
+  public enum ArchiveContents: Sendable {
+    /// Every file in the folder — images, `ComicInfo.xml`, anything else (the default).
+    case all
+    /// Image files only.
+    case imagesOnly
+    /// Image files plus `ComicInfo.xml` / `MetronInfo.xml`.
+    case imagesAndInfo
+  }
+
   /// Options controlling archiving.
   public struct ArchiveOptions: Sendable {
     /// Explicit destination path (its extension selects the output format; defaults to `.cbz`).
     public var to: String?
     /// Delete the source after a successful archive.
     public var deleteOriginal: Bool
+    /// Which files to include (defaults to `.all`).
+    public var contents: ArchiveContents
 
-    public init(to: String? = nil, deleteOriginal: Bool = false) {
+    public init(to: String? = nil, deleteOriginal: Bool = false, contents: ArchiveContents = .all) {
       self.to = to
       self.deleteOriginal = deleteOriginal
+      self.contents = contents
     }
   }
 }

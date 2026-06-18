@@ -5,21 +5,57 @@ import Testing
 
 struct CBZTests {
 
-  @Test func testArchiveFolderToCbzIsImagesOnly() throws {
+  @Test func testArchiveIncludesAllFilesByDefault() throws {
     let xml = "<?xml version=\"1.0\"?><ComicInfo><Title>RT</Title></ComicInfo>"
     let src = try makeFixtureDirectory(["page1.jpg": "a", "page2.png": "b", "ComicInfo.xml": xml, "notes.txt": "n"])
     defer { try? FileManager.default.removeItem(at: src) }
 
-    let cbzPath = src.path + ".cbz"
-    let output = try ComicBook.load(src.path).archive(options: ComicBook.ArchiveOptions(to: cbzPath))
+    let output = try ComicBook.load(src.path).archive(options: ComicBook.ArchiveOptions(to: src.path + ".cbz"))
     defer { try? FileManager.default.removeItem(atPath: output) }
 
-    #expect(output == cbzPath)
+    // Default is .all: ComicInfo.xml and notes.txt are included alongside the images.
     let comic = try ComicBook.load(output)
-    #expect(comic.type == .cbz)
-    // Archiving is images-only: notes.txt and ComicInfo.xml are not included.
+    #expect(try comic.info()?.title == "RT")
+
+    let extracted = src.path + "-out.cb"
+    _ = try comic.extract(options: ComicBook.ExtractOptions(to: extracted))
+    defer { try? FileManager.default.removeItem(atPath: extracted) }
+    #expect(FileManager.default.fileExists(atPath: extracted + "/notes.txt"))
+    #expect(FileManager.default.fileExists(atPath: extracted + "/ComicInfo.xml"))
+  }
+
+  @Test func testArchiveImagesOnly() throws {
+    let xml = "<?xml version=\"1.0\"?><ComicInfo><Title>RT</Title></ComicInfo>"
+    let src = try makeFixtureDirectory(["page1.jpg": "a", "page2.png": "b", "ComicInfo.xml": xml, "notes.txt": "n"])
+    defer { try? FileManager.default.removeItem(at: src) }
+
+    let output = try ComicBook.load(src.path).archive(
+      options: ComicBook.ArchiveOptions(to: src.path + ".cbz", contents: .imagesOnly))
+    defer { try? FileManager.default.removeItem(atPath: output) }
+
+    let comic = try ComicBook.load(output)
     #expect(try comic.pages().map(\.name) == ["page1.jpg", "page2.png"])
     #expect(try comic.info() == nil)
+  }
+
+  @Test func testArchiveImagesAndInfo() throws {
+    let xml = "<?xml version=\"1.0\"?><ComicInfo><Title>RT</Title></ComicInfo>"
+    let metron = "<?xml version=\"1.0\"?><MetronInfo><Number>1</Number></MetronInfo>"
+    let src = try makeFixtureDirectory(["page1.jpg": "a", "ComicInfo.xml": xml, "MetronInfo.xml": metron, "notes.txt": "n"])
+    defer { try? FileManager.default.removeItem(at: src) }
+
+    let output = try ComicBook.load(src.path).archive(
+      options: ComicBook.ArchiveOptions(to: src.path + ".cbz", contents: .imagesAndInfo))
+    defer { try? FileManager.default.removeItem(atPath: output) }
+
+    let comic = try ComicBook.load(output)
+    #expect(try comic.info()?.title == "RT")
+
+    let extracted = src.path + "-out.cb"
+    _ = try comic.extract(options: ComicBook.ExtractOptions(to: extracted))
+    defer { try? FileManager.default.removeItem(atPath: extracted) }
+    #expect(FileManager.default.fileExists(atPath: extracted + "/MetronInfo.xml"))
+    #expect(!FileManager.default.fileExists(atPath: extracted + "/notes.txt"))
   }
 
   @Test func testCbzExtractRestoresImages() throws {

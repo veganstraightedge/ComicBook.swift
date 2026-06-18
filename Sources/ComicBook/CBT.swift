@@ -39,7 +39,7 @@ struct CBT: ComicBookAdapter {
 
     do {
       var entries: [TarEntry] = []
-      for image in ComicBook.imageFiles(in: URL(fileURLWithPath: path)) {
+      for image in ComicBook.archiveFiles(in: URL(fileURLWithPath: path), contents: options.contents) {
         let data = try Data(contentsOf: image.fileURL)
         entries.append(TarEntry(info: TarEntryInfo(name: image.relativePath, type: .regular), data: data))
       }
