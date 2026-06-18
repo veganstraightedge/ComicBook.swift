@@ -16,11 +16,11 @@ Dev-process and architecture notes for ComicBook.swift. Mirrors ComicInfo.swift'
 
 ## Architecture (CRITICAL — same pattern as ComicInfo.swift)
 
-- `public enum ComicBook` is a **caseless namespace** enum. All domain types are nested and spread
-  across files via `extension ComicBook { ... }` (Swift can't declare nested types in extensions of
-  *other* files, so each file reopens the namespace).
+- `public struct ComicBook` is **both the loaded comic and the namespace**: a value with `path` +
+  detected `ArchiveType` (mirroring the gem's `ComicBook` class — `ComicBook(path:).pages()`), while
+  also nesting all domain types, spread across files via `extension ComicBook { ... }` (Swift can't
+  declare nested types in extensions of *other* files, so each file reopens it).
 - The one top-level type is `ComicBookError` (in `Errors.swift`), like `ComicInfoError`.
-- `ComicBook.Comic` is the loaded comic (path + detected `ArchiveType`); the gem's `ComicBook` class.
 - `ComicBook.Info` is a `typealias` for `ComicInfo.Issue` (the gem's `ComicBook::Info = ComicInfo::Issue`).
 - Per-format adapters conform to the internal `ComicBookAdapter` protocol (`pages`/`info`/`archive`/
   `extract`). One file per format: `CB`, `CBZ`, `CBT`, `CB7`, `CBR`, `CBA`, `PDF`.
