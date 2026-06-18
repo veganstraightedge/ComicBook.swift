@@ -39,12 +39,12 @@ extension ComicBook {
     }
   }
 
-  /// Which files from a source folder get written into an archive.
-  public enum ArchiveContents: Sendable {
-    /// Every file in the folder — images, `ComicInfo.xml`, anything else (the default).
+  /// A subset of a comic's files — used by `files(type:)` and by archiving's `contents`.
+  public enum Contents: Sendable {
+    /// Every file — images, `ComicInfo.xml`, anything else (the default).
     case all
     /// Image files only.
-    case imagesOnly
+    case images
     /// Image files plus `ComicInfo.xml` / `MetronInfo.xml`.
     case imagesAndInfo
   }
@@ -56,9 +56,9 @@ extension ComicBook {
     /// Delete the source after a successful archive.
     public var deleteOriginal: Bool
     /// Which files to include (defaults to `.all`).
-    public var contents: ArchiveContents
+    public var contents: Contents
 
-    public init(to: String? = nil, deleteOriginal: Bool = false, contents: ArchiveContents = .all) {
+    public init(to: String? = nil, deleteOriginal: Bool = false, contents: Contents = .all) {
       self.to = to
       self.deleteOriginal = deleteOriginal
       self.contents = contents
@@ -71,8 +71,21 @@ extension ComicBook {
 /// Internal; one concrete type per `ArchiveType`.
 protocol ComicBookAdapter {
   init(path: String)
+  func entries() throws -> [ComicBook.Entry]
   func pages() throws -> [ComicBook.Page]
   func info() throws -> ComicBook.Info?
   func archive(options: ComicBook.ArchiveOptions) throws -> String
   func extract(options: ComicBook.ExtractOptions) throws -> String
+}
+
+extension ComicBookAdapter {
+  /// Default for formats with no listable members (PDF renders synthetic pages; CBA is a stub).
+  func entries() throws -> [ComicBook.Entry] {
+    throw ComicBookError.notImplemented("entries() not implemented for this format")
+  }
+
+  /// Default for formats that don't list their own pages — only PDF and CBA override.
+  func pages() throws -> [ComicBook.Page] {
+    throw ComicBookError.notImplemented("pages() not implemented for this format")
+  }
 }

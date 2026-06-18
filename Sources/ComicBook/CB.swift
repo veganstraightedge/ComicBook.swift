@@ -10,22 +10,26 @@ import Foundation
 struct CB: ComicBookAdapter {
   let path: String
 
-  /// Image pages as folder-relative paths, sorted by path.
-  func pages() throws -> [ComicBook.Page] {
+  /// Every file in the folder, as Entries with folder-relative paths (hidden files skipped).
+  func entries() throws -> [ComicBook.Entry] {
     let fileManager = FileManager.default
     let baseURL = URL(fileURLWithPath: path).resolvingSymlinksInPath()
     let baseComponentCount = baseURL.pathComponents.count
-    guard let enumerator = fileManager.enumerator(at: baseURL, includingPropertiesForKeys: nil) else {
+    guard
+      let enumerator = fileManager.enumerator(
+        at: baseURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles])
+    else {
       return []
     }
 
-    var relativePaths: [String] = []
-    for case let url as URL in enumerator where ComicBook.isImageFile(url.lastPathComponent) {
-      let relativeComponents = url.resolvingSymlinksInPath().pathComponents.dropFirst(baseComponentCount)
-      relativePaths.append(relativeComponents.joined(separator: "/"))
+    var entries: [ComicBook.Entry] = []
+    for case let url as URL in enumerator {
+      let isDirectory = (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
+      guard !isDirectory else { continue }
+      let relative = url.resolvingSymlinksInPath().pathComponents.dropFirst(baseComponentCount).joined(separator: "/")
+      entries.append(ComicBook.Entry(path: relative))
     }
-
-    return relativePaths.sorted().map { ComicBook.Page(path: $0, name: ($0 as NSString).lastPathComponent) }
+    return entries
   }
 
   /// Read `ComicInfo.xml` from the folder, if present.

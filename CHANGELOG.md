@@ -7,9 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-06-18
+
+Version jumps 0.2.0 → 0.4.0 to track the `comicbook` gem (0.3.0 was never released).
+
+### Added
+- `ComicBook.files(type:)` — list a comic's files, filtered by `.all` (default), `.images`, or `.imagesAndInfo` (images plus `ComicInfo.xml` / `MetronInfo.xml`), as `ComicBook.Entry` values that answer `isImage` / `isInfo`. Mirrors the `comicbook` gem 0.4.0.
+
 ### Changed
 - **The loaded comic is now `ComicBook` itself, not `ComicBook.Comic`.** `ComicBook` is a `struct` you construct directly — `ComicBook(path:).pages()` — mirroring the gem's `ComicBook.new(path).pages`. `ComicBook.load(_:)` now returns a `ComicBook`. Nested types (`ComicBook.Page`, `ComicBook.Info`, …) and the static entry points are unchanged.
-- **`archive` now includes every file in the source folder by default** (was images-only). `ArchiveOptions.contents` selects what to write: `.all` (default), `.imagesOnly` (the previous behavior), or `.imagesAndInfo` (images plus `ComicInfo.xml` / `MetronInfo.xml`). Applies to CBZ / CBT / CB7; CB (folder) already keeps the whole folder. Mirrors the `comicbook` gem 0.4.0.
+- **`archive` now includes every file in the source folder by default** (was images-only). `ArchiveOptions.contents` (a `ComicBook.Contents`) selects what to write: `.all` (default), `.images` (the previous behavior), or `.imagesAndInfo` (images plus `ComicInfo.xml` / `MetronInfo.xml`). Applies to CBZ / CBT / CB7; CB (folder) already keeps the whole folder. Mirrors the `comicbook` gem 0.4.0.
+- Pages are ordered by full entry path; folder pages now use folder-relative paths (previously absolute), consistent with `.cb` and archive sources.
 
 ## [0.2.0] - 2026-06-17
 

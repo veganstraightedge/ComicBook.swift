@@ -30,7 +30,7 @@ struct CBZTests {
     defer { try? FileManager.default.removeItem(at: src) }
 
     let output = try ComicBook.load(src.path).archive(
-      options: ComicBook.ArchiveOptions(to: src.path + ".cbz", contents: .imagesOnly))
+      options: ComicBook.ArchiveOptions(to: src.path + ".cbz", contents: .images))
     defer { try? FileManager.default.removeItem(atPath: output) }
 
     let comic = try ComicBook.load(output)

@@ -22,40 +22,4 @@ extension ComicBook {
   static func isInfoFile(_ name: String) -> Bool {
     infoFilenames.contains(name.lowercased())
   }
-
-  /// The files under `directory` to archive for `contents`, as `(relativePath, fileURL)` pairs.
-  ///
-  /// Sorted by relative path; hidden files are skipped.
-  static func archiveFiles(
-    in directory: URL, contents: ArchiveContents
-  ) -> [(relativePath: String, fileURL: URL)] {
-    let fileManager = FileManager.default
-    let base = directory.resolvingSymlinksInPath()
-    let baseComponentCount = base.pathComponents.count
-    guard
-      let enumerator = fileManager.enumerator(
-        at: base, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles])
-    else {
-      return []
-    }
-
-    var results: [(relativePath: String, fileURL: URL)] = []
-    for case let url as URL in enumerator {
-      let isDirectory = (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
-      guard !isDirectory else { continue }
-
-      let name = url.lastPathComponent
-      let include =
-        switch contents {
-        case .all: true
-        case .imagesOnly: isImageFile(name)
-        case .imagesAndInfo: isImageFile(name) || isInfoFile(name)
-        }
-      guard include else { continue }
-
-      let relative = url.resolvingSymlinksInPath().pathComponents.dropFirst(baseComponentCount).joined(separator: "/")
-      results.append((relative, url))
-    }
-    return results.sorted { $0.relativePath < $1.relativePath }
-  }
 }

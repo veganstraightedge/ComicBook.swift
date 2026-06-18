@@ -11,13 +11,13 @@ import SWCompression
 struct CBT: ComicBookAdapter {
   let path: String
 
-  /// Image pages inside the archive, sorted by basename.
-  func pages() throws -> [ComicBook.Page] {
-    var pages: [ComicBook.Page] = []
-    for entry in try readEntries() where entry.info.type == .regular && ComicBook.isImageFile(entry.info.name) {
-      pages.append(ComicBook.Page(path: entry.info.name, name: (entry.info.name as NSString).lastPathComponent))
+  /// Every file member of the archive, as Entries (paths are the in-archive entry names).
+  func entries() throws -> [ComicBook.Entry] {
+    var entries: [ComicBook.Entry] = []
+    for entry in try readEntries() where entry.info.type == .regular {
+      entries.append(ComicBook.Entry(path: entry.info.name))
     }
-    return pages.sorted { $0.name < $1.name }
+    return entries
   }
 
   /// Read `ComicInfo.xml` from the archive, if present.
@@ -28,7 +28,7 @@ struct CBT: ComicBookAdapter {
     return try ComicInfo.load(fromXML: xml)
   }
 
-  /// Create a CBT from the source folder's image files (images only).
+  /// Create a CBT from the source folder's files (filtered by `options.contents`).
   ///
   /// Returns the output path.
   func archive(options: ComicBook.ArchiveOptions) throws -> String {
@@ -37,11 +37,13 @@ struct CBT: ComicBookAdapter {
       throw ComicBookError.destinationExists(output)
     }
 
+    let sourceURL = URL(fileURLWithPath: path)
+    let files = try ComicBook(path: path).files(type: options.contents)
     do {
       var entries: [TarEntry] = []
-      for image in ComicBook.archiveFiles(in: URL(fileURLWithPath: path), contents: options.contents) {
-        let data = try Data(contentsOf: image.fileURL)
-        entries.append(TarEntry(info: TarEntryInfo(name: image.relativePath, type: .regular), data: data))
+      for file in files {
+        let data = try Data(contentsOf: sourceURL.appendingPathComponent(file.path))
+        entries.append(TarEntry(info: TarEntryInfo(name: file.path, type: .regular), data: data))
       }
       try TarContainer.create(from: entries).write(to: URL(fileURLWithPath: output))
     } catch {

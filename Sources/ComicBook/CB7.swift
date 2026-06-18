@@ -11,17 +11,16 @@ import PLzmaSDK
 struct CB7: ComicBookAdapter {
   let path: String
 
-  /// Image pages inside the archive, sorted by basename.
-  func pages() throws -> [ComicBook.Page] {
+  /// Every file member of the archive, as Entries (paths are the in-archive entry names).
+  func entries() throws -> [ComicBook.Entry] {
     let (decoder, count) = try openDecoder()
-    var pages: [ComicBook.Page] = []
+    var entries: [ComicBook.Entry] = []
     for index in 0..<count {
       let item = try decoder.item(at: index)
-      let name = try item.path().description
-      guard !item.isDir, ComicBook.isImageFile(name) else { continue }
-      pages.append(ComicBook.Page(path: name, name: (name as NSString).lastPathComponent))
+      guard !item.isDir else { continue }
+      entries.append(ComicBook.Entry(path: try item.path().description))
     }
-    return pages.sorted { $0.name < $1.name }
+    return entries
   }
 
   /// Read `ComicInfo.xml` from the archive, if present.
@@ -40,7 +39,7 @@ struct CB7: ComicBookAdapter {
     return nil
   }
 
-  /// Create a CB7 from the source folder's image files (images only).
+  /// Create a CB7 from the source folder's files (filtered by `options.contents`).
   ///
   /// Returns the output path.
   func archive(options: ComicBook.ArchiveOptions) throws -> String {
@@ -49,10 +48,13 @@ struct CB7: ComicBookAdapter {
       throw ComicBookError.destinationExists(output)
     }
 
+    let sourceURL = URL(fileURLWithPath: path)
+    let files = try ComicBook(path: path).files(type: options.contents)
     do {
       let encoder = try Encoder(stream: try OutStream(path: try Path(output)), fileType: .sevenZ, method: .LZMA2)
-      for image in ComicBook.archiveFiles(in: URL(fileURLWithPath: path), contents: options.contents) {
-        try encoder.add(path: try Path(image.fileURL.path), mode: .default, archivePath: try Path(image.relativePath))
+      for file in files {
+        let fileURL = sourceURL.appendingPathComponent(file.path)
+        try encoder.add(path: try Path(fileURL.path), mode: .default, archivePath: try Path(file.path))
       }
       _ = try encoder.open()
       _ = try encoder.compress()

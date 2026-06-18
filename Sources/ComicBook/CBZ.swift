@@ -11,14 +11,14 @@ import ZIPFoundation
 struct CBZ: ComicBookAdapter {
   let path: String
 
-  /// Image pages inside the archive, sorted by basename.
-  func pages() throws -> [ComicBook.Page] {
+  /// Every file member of the archive, as Entries (paths are the in-archive entry names).
+  func entries() throws -> [ComicBook.Entry] {
     let archive = try openForReading()
-    var pages: [ComicBook.Page] = []
-    for entry in archive where entry.type == .file && ComicBook.isImageFile(entry.path) {
-      pages.append(ComicBook.Page(path: entry.path, name: (entry.path as NSString).lastPathComponent))
+    var entries: [ComicBook.Entry] = []
+    for entry in archive where entry.type == .file {
+      entries.append(ComicBook.Entry(path: entry.path))
     }
-    return pages.sorted { $0.name < $1.name }
+    return entries
   }
 
   /// Read `ComicInfo.xml` from the archive, if present.
@@ -31,7 +31,7 @@ struct CBZ: ComicBookAdapter {
     return try ComicInfo.load(fromXML: xml)
   }
 
-  /// Create a CBZ from the source folder's image files (images only).
+  /// Create a CBZ from the source folder's files (filtered by `options.contents`).
   ///
   /// Returns the output path.
   func archive(options: ComicBook.ArchiveOptions) throws -> String {
@@ -40,10 +40,13 @@ struct CBZ: ComicBookAdapter {
       throw ComicBookError.destinationExists(output)
     }
 
+    let sourceURL = URL(fileURLWithPath: path)
+    let files = try ComicBook(path: path).files(type: options.contents)
     do {
       let archive = try Archive(url: URL(fileURLWithPath: output), accessMode: .create)
-      for image in ComicBook.archiveFiles(in: URL(fileURLWithPath: path), contents: options.contents) {
-        try archive.addEntry(with: image.relativePath, fileURL: image.fileURL, compressionMethod: .deflate)
+      for file in files {
+        try archive.addEntry(
+          with: file.path, fileURL: sourceURL.appendingPathComponent(file.path), compressionMethod: .deflate)
       }
     } catch {
       throw ComicBookError.archiveError(error.localizedDescription)
