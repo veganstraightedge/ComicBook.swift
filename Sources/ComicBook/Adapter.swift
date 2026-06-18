@@ -39,12 +39,12 @@ extension ComicBook {
     }
   }
 
-  /// Which files from a source folder get written into an archive.
-  public enum ArchiveContents: Sendable {
-    /// Every file in the folder — images, `ComicInfo.xml`, anything else (the default).
+  /// A subset of a comic's files — used by `files(type:)` and by archiving's `contents`.
+  public enum Contents: Sendable {
+    /// Every file — images, `ComicInfo.xml`, anything else (the default).
     case all
     /// Image files only.
-    case imagesOnly
+    case images
     /// Image files plus `ComicInfo.xml` / `MetronInfo.xml`.
     case imagesAndInfo
   }
@@ -56,9 +56,9 @@ extension ComicBook {
     /// Delete the source after a successful archive.
     public var deleteOriginal: Bool
     /// Which files to include (defaults to `.all`).
-    public var contents: ArchiveContents
+    public var contents: Contents
 
-    public init(to: String? = nil, deleteOriginal: Bool = false, contents: ArchiveContents = .all) {
+    public init(to: String? = nil, deleteOriginal: Bool = false, contents: Contents = .all) {
       self.to = to
       self.deleteOriginal = deleteOriginal
       self.contents = contents

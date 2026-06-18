@@ -27,7 +27,7 @@ extension ComicBook {
   ///
   /// Sorted by relative path; hidden files are skipped.
   static func archiveFiles(
-    in directory: URL, contents: ArchiveContents
+    in directory: URL, contents: Contents
   ) -> [(relativePath: String, fileURL: URL)] {
     let fileManager = FileManager.default
     let base = directory.resolvingSymlinksInPath()
@@ -48,7 +48,7 @@ extension ComicBook {
       let include =
         switch contents {
         case .all: true
-        case .imagesOnly: isImageFile(name)
+        case .images: isImageFile(name)
         case .imagesAndInfo: isImageFile(name) || isInfoFile(name)
         }
       guard include else { continue }
