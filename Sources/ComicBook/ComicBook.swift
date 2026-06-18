@@ -61,6 +61,18 @@ public struct ComicBook {
     return try adapter().info()
   }
 
+  /// The files in this comic, filtered by `type` (`.all` by default), in path order.
+  public func files(type: Contents = .all) throws -> [Entry] {
+    let entries = try adapter().entries()
+    let filtered =
+      switch type {
+      case .all: entries
+      case .images: entries.filter(\.isImage)
+      case .imagesAndInfo: entries.filter { $0.isImage || $0.isInfo }
+      }
+    return filtered.sorted { $0.path < $1.path }
+  }
+
   /// Extract this archive into a folder.
   ///
   /// Returns the destination path.
