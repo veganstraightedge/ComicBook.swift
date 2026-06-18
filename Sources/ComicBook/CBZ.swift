@@ -42,7 +42,7 @@ struct CBZ: ComicBookAdapter {
 
     do {
       let archive = try Archive(url: URL(fileURLWithPath: output), accessMode: .create)
-      for image in ComicBook.imageFiles(in: URL(fileURLWithPath: path)) {
+      for image in ComicBook.archiveFiles(in: URL(fileURLWithPath: path), contents: options.contents) {
         try archive.addEntry(with: image.relativePath, fileURL: image.fileURL, compressionMethod: .deflate)
       }
     } catch {

@@ -51,7 +51,7 @@ struct CB7: ComicBookAdapter {
 
     do {
       let encoder = try Encoder(stream: try OutStream(path: try Path(output)), fileType: .sevenZ, method: .LZMA2)
-      for image in ComicBook.imageFiles(in: URL(fileURLWithPath: path)) {
+      for image in ComicBook.archiveFiles(in: URL(fileURLWithPath: path), contents: options.contents) {
         try encoder.add(path: try Path(image.fileURL.path), mode: .default, archivePath: try Path(image.relativePath))
       }
       _ = try encoder.open()

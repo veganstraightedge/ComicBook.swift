@@ -29,7 +29,7 @@ A [`comicbook`](https://github.com/veganstraightedge/comicbook) Ruby gem is also
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/veganstraightedge/ComicBook.swift.git", from: "0.2.0")
+  .package(url: "https://github.com/veganstraightedge/ComicBook.swift.git", from: "0.3.0")
 ]
 ```
 
@@ -50,7 +50,7 @@ let folder = try comic.extract()
 let cbz = try ComicBook.archive("./pages", options: .init(to: "Issue1.cbz"))
 ```
 
-Archiving includes image files only (matching the gem); extraction is lossless unless `imagesOnly`.
+Archiving includes all files by default; `ArchiveOptions.contents` selects `.all` / `.imagesOnly` / `.imagesAndInfo` (images + `ComicInfo.xml` / `MetronInfo.xml`). Extraction is lossless unless `imagesOnly`.
 
 ## CLI
 

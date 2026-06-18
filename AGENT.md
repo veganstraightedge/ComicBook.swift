@@ -39,7 +39,7 @@ Dev-process and architecture notes for ComicBook.swift. Mirrors ComicInfo.swift'
 
 ## Key behaviors (match the gem)
 
-- Archiving is **images-only**; extraction is lossless unless `imagesOnly`.
+- Archiving includes **all files by default** (`ArchiveOptions.contents`: `.all` / `.imagesOnly` / `.imagesAndInfo`); extraction is lossless unless `imagesOnly`.
 - Default extract dir = `<basename>.cb`; default archive ext = `.cbz`.
 - Page `path`: archive → entry name; `.cb` → relative; top-level folder → absolute.
 - Image detection is extension-based, case-insensitive: `.jpg .jpeg .png .gif .bmp .webp`.
