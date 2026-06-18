@@ -31,7 +31,7 @@ struct CBZ: ComicBookAdapter {
     return try ComicInfo.load(fromXML: xml)
   }
 
-  /// Create a CBZ from the source folder's image files (images only).
+  /// Create a CBZ from the source folder's files (filtered by `options.contents`).
   ///
   /// Returns the output path.
   func archive(options: ComicBook.ArchiveOptions) throws -> String {
@@ -40,10 +40,13 @@ struct CBZ: ComicBookAdapter {
       throw ComicBookError.destinationExists(output)
     }
 
+    let sourceURL = URL(fileURLWithPath: path)
+    let files = try ComicBook(path: path).files(type: options.contents)
     do {
       let archive = try Archive(url: URL(fileURLWithPath: output), accessMode: .create)
-      for image in ComicBook.archiveFiles(in: URL(fileURLWithPath: path), contents: options.contents) {
-        try archive.addEntry(with: image.relativePath, fileURL: image.fileURL, compressionMethod: .deflate)
+      for file in files {
+        try archive.addEntry(
+          with: file.path, fileURL: sourceURL.appendingPathComponent(file.path), compressionMethod: .deflate)
       }
     } catch {
       throw ComicBookError.archiveError(error.localizedDescription)

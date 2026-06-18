@@ -28,7 +28,7 @@ struct CBT: ComicBookAdapter {
     return try ComicInfo.load(fromXML: xml)
   }
 
-  /// Create a CBT from the source folder's image files (images only).
+  /// Create a CBT from the source folder's files (filtered by `options.contents`).
   ///
   /// Returns the output path.
   func archive(options: ComicBook.ArchiveOptions) throws -> String {
@@ -37,11 +37,13 @@ struct CBT: ComicBookAdapter {
       throw ComicBookError.destinationExists(output)
     }
 
+    let sourceURL = URL(fileURLWithPath: path)
+    let files = try ComicBook(path: path).files(type: options.contents)
     do {
       var entries: [TarEntry] = []
-      for image in ComicBook.archiveFiles(in: URL(fileURLWithPath: path), contents: options.contents) {
-        let data = try Data(contentsOf: image.fileURL)
-        entries.append(TarEntry(info: TarEntryInfo(name: image.relativePath, type: .regular), data: data))
+      for file in files {
+        let data = try Data(contentsOf: sourceURL.appendingPathComponent(file.path))
+        entries.append(TarEntry(info: TarEntryInfo(name: file.path, type: .regular), data: data))
       }
       try TarContainer.create(from: entries).write(to: URL(fileURLWithPath: output))
     } catch {

@@ -39,7 +39,7 @@ struct CB7: ComicBookAdapter {
     return nil
   }
 
-  /// Create a CB7 from the source folder's image files (images only).
+  /// Create a CB7 from the source folder's files (filtered by `options.contents`).
   ///
   /// Returns the output path.
   func archive(options: ComicBook.ArchiveOptions) throws -> String {
@@ -48,10 +48,13 @@ struct CB7: ComicBookAdapter {
       throw ComicBookError.destinationExists(output)
     }
 
+    let sourceURL = URL(fileURLWithPath: path)
+    let files = try ComicBook(path: path).files(type: options.contents)
     do {
       let encoder = try Encoder(stream: try OutStream(path: try Path(output)), fileType: .sevenZ, method: .LZMA2)
-      for image in ComicBook.archiveFiles(in: URL(fileURLWithPath: path), contents: options.contents) {
-        try encoder.add(path: try Path(image.fileURL.path), mode: .default, archivePath: try Path(image.relativePath))
+      for file in files {
+        let fileURL = sourceURL.appendingPathComponent(file.path)
+        try encoder.add(path: try Path(fileURL.path), mode: .default, archivePath: try Path(file.path))
       }
       _ = try encoder.open()
       _ = try encoder.compress()
