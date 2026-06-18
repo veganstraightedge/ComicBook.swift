@@ -23,19 +23,6 @@ struct CB7: ComicBookAdapter {
     return entries
   }
 
-  /// Image pages inside the archive, sorted by basename.
-  func pages() throws -> [ComicBook.Page] {
-    let (decoder, count) = try openDecoder()
-    var pages: [ComicBook.Page] = []
-    for index in 0..<count {
-      let item = try decoder.item(at: index)
-      let name = try item.path().description
-      guard !item.isDir, ComicBook.isImageFile(name) else { continue }
-      pages.append(ComicBook.Page(path: name, name: (name as NSString).lastPathComponent))
-    }
-    return pages.sorted { $0.name < $1.name }
-  }
-
   /// Read `ComicInfo.xml` from the archive, if present.
   func info() throws -> ComicBook.Info? {
     let (decoder, count) = try openDecoder()

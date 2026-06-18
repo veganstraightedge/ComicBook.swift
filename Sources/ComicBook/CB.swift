@@ -32,24 +32,6 @@ struct CB: ComicBookAdapter {
     return entries
   }
 
-  /// Image pages as folder-relative paths, sorted by path.
-  func pages() throws -> [ComicBook.Page] {
-    let fileManager = FileManager.default
-    let baseURL = URL(fileURLWithPath: path).resolvingSymlinksInPath()
-    let baseComponentCount = baseURL.pathComponents.count
-    guard let enumerator = fileManager.enumerator(at: baseURL, includingPropertiesForKeys: nil) else {
-      return []
-    }
-
-    var relativePaths: [String] = []
-    for case let url as URL in enumerator where ComicBook.isImageFile(url.lastPathComponent) {
-      let relativeComponents = url.resolvingSymlinksInPath().pathComponents.dropFirst(baseComponentCount)
-      relativePaths.append(relativeComponents.joined(separator: "/"))
-    }
-
-    return relativePaths.sorted().map { ComicBook.Page(path: $0, name: ($0 as NSString).lastPathComponent) }
-  }
-
   /// Read `ComicInfo.xml` from the folder, if present.
   func info() throws -> ComicBook.Info? {
     let xmlPath = (path as NSString).appendingPathComponent("ComicInfo.xml")

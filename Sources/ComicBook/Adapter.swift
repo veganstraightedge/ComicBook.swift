@@ -83,4 +83,9 @@ extension ComicBookAdapter {
   func entries() throws -> [ComicBook.Entry] {
     throw ComicBookError.notImplemented("entries() not implemented for this format")
   }
+
+  /// Default for formats that don't list their own pages — only PDF and CBA override.
+  func pages() throws -> [ComicBook.Page] {
+    throw ComicBookError.notImplemented("pages() not implemented for this format")
+  }
 }

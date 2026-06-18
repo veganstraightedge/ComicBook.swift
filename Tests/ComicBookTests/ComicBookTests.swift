@@ -48,14 +48,14 @@ struct ComicBookTests {
     #expect(throws: ComicBookError.self) { try ComicBook.load("/nope/\(UUID().uuidString).cbz") }
   }
 
-  // MARK: - Folder pages (absolute) vs CB pages (relative)
+  // MARK: - Pages (folder and .cb both yield folder-relative paths)
 
-  @Test func testFolderPagesAreSortedAbsoluteImagesOnly() throws {
+  @Test func testFolderPagesAreSortedRelativeImagesOnly() throws {
     let dir = try makeTempDir(["page2.png": "x", "page1.jpg": "x", "readme.txt": "x", "sub/page3.gif": "x"])
     defer { try? FileManager.default.removeItem(at: dir) }
     let pages = try ComicBook.load(dir.path).pages()
     #expect(pages.map(\.name) == ["page1.jpg", "page2.png", "page3.gif"])
-    #expect(pages.allSatisfy { $0.path.hasPrefix("/") })
+    #expect(pages.map(\.path) == ["page1.jpg", "page2.png", "sub/page3.gif"])
   }
 
   @Test func testCbPagesAreRelative() throws {

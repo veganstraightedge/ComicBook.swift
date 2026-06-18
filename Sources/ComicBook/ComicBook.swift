@@ -49,10 +49,12 @@ public struct ComicBook {
 
   // MARK: - Instance API
 
-  /// List the image pages in this comic book (no extraction).
+  /// The image pages, in path order, as `Page` objects (no extraction).
+  ///
+  /// PDF renders synthetic pages and CBA is a stub, so both stay custom.
   public func pages() throws -> [Page] {
-    if type == .folder { return try folderPages() }
-    return try adapter().pages()
+    if type == .pdf || type == .cba { return try adapter().pages() }
+    return try files(type: .images).map { Page(path: $0.path, name: $0.name) }
   }
 
   /// Read the `ComicInfo.xml` metadata, or nil if there is none.
@@ -120,22 +122,6 @@ public struct ComicBook {
     case .pdf: return PDF(path: path)
     case .cb, .folder: return CB(path: path)
     }
-  }
-
-  /// Recursively glob image files in a plain folder, sorted, as absolute-path pages.
-  private func folderPages() throws -> [Page] {
-    let fileManager = FileManager.default
-    let baseURL = URL(fileURLWithPath: path)
-    guard let enumerator = fileManager.enumerator(at: baseURL, includingPropertiesForKeys: nil) else {
-      return []
-    }
-
-    var imagePaths: [String] = []
-    for case let url as URL in enumerator where ComicBook.isImageFile(url.lastPathComponent) {
-      imagePaths.append(url.path)
-    }
-
-    return imagePaths.sorted().map { Page(path: $0, name: ($0 as NSString).lastPathComponent) }
   }
 
   /// Detect the comic book type for a path that exists on disk.

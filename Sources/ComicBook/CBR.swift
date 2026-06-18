@@ -23,14 +23,6 @@ struct CBR: ComicBookAdapter {
       try CLIHelpers.lsarList(path).map { ComicBook.Entry(path: $0) }
     }
 
-    /// Image pages inside the archive, sorted by basename.
-    func pages() throws -> [ComicBook.Page] {
-      try CLIHelpers.lsarList(path)
-        .filter { ComicBook.isImageFile($0) }
-        .map { ComicBook.Page(path: $0, name: ($0 as NSString).lastPathComponent) }
-        .sorted { $0.name < $1.name }
-    }
-
     /// Read `ComicInfo.xml` (extracting to a temp folder, since RAR has no random access here).
     func info() throws -> ComicBook.Info? {
       guard try CLIHelpers.lsarList(path).contains("ComicInfo.xml") else { return nil }
@@ -70,9 +62,6 @@ struct CBR: ComicBookAdapter {
     }
   #else
     func entries() throws -> [ComicBook.Entry] {
-      throw ComicBookError.notSupported("CBR (RAR) is only supported on macOS")
-    }
-    func pages() throws -> [ComicBook.Page] {
       throw ComicBookError.notSupported("CBR (RAR) is only supported on macOS")
     }
     func info() throws -> ComicBook.Info? {

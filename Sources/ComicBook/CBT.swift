@@ -20,15 +20,6 @@ struct CBT: ComicBookAdapter {
     return entries
   }
 
-  /// Image pages inside the archive, sorted by basename.
-  func pages() throws -> [ComicBook.Page] {
-    var pages: [ComicBook.Page] = []
-    for entry in try readEntries() where entry.info.type == .regular && ComicBook.isImageFile(entry.info.name) {
-      pages.append(ComicBook.Page(path: entry.info.name, name: (entry.info.name as NSString).lastPathComponent))
-    }
-    return pages.sorted { $0.name < $1.name }
-  }
-
   /// Read `ComicInfo.xml` from the archive, if present.
   func info() throws -> ComicBook.Info? {
     guard let entry = try readEntries().first(where: { $0.info.name == "ComicInfo.xml" }),
