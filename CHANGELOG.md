@@ -7,8 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.3.0] - 2026-06-17
-
 ### Changed
 - **`archive` now includes every file in the source folder by default** (was images-only). `ArchiveOptions.contents` selects what to write: `.all` (default), `.imagesOnly` (the previous behavior), or `.imagesAndInfo` (images plus `ComicInfo.xml` / `MetronInfo.xml`). Applies to CBZ / CBT / CB7; CB (folder) already keeps the whole folder. Mirrors the `comicbook` gem 0.4.0.
 
