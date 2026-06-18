@@ -11,6 +11,15 @@ import SWCompression
 struct CBT: ComicBookAdapter {
   let path: String
 
+  /// Every file member of the archive, as Entries (paths are the in-archive entry names).
+  func entries() throws -> [ComicBook.Entry] {
+    var entries: [ComicBook.Entry] = []
+    for entry in try readEntries() where entry.info.type == .regular {
+      entries.append(ComicBook.Entry(path: entry.info.name))
+    }
+    return entries
+  }
+
   /// Image pages inside the archive, sorted by basename.
   func pages() throws -> [ComicBook.Page] {
     var pages: [ComicBook.Page] = []

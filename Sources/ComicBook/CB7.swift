@@ -11,6 +11,18 @@ import PLzmaSDK
 struct CB7: ComicBookAdapter {
   let path: String
 
+  /// Every file member of the archive, as Entries (paths are the in-archive entry names).
+  func entries() throws -> [ComicBook.Entry] {
+    let (decoder, count) = try openDecoder()
+    var entries: [ComicBook.Entry] = []
+    for index in 0..<count {
+      let item = try decoder.item(at: index)
+      guard !item.isDir else { continue }
+      entries.append(ComicBook.Entry(path: try item.path().description))
+    }
+    return entries
+  }
+
   /// Image pages inside the archive, sorted by basename.
   func pages() throws -> [ComicBook.Page] {
     let (decoder, count) = try openDecoder()

@@ -10,6 +10,28 @@ import Foundation
 struct CB: ComicBookAdapter {
   let path: String
 
+  /// Every file in the folder, as Entries with folder-relative paths (hidden files skipped).
+  func entries() throws -> [ComicBook.Entry] {
+    let fileManager = FileManager.default
+    let baseURL = URL(fileURLWithPath: path).resolvingSymlinksInPath()
+    let baseComponentCount = baseURL.pathComponents.count
+    guard
+      let enumerator = fileManager.enumerator(
+        at: baseURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles])
+    else {
+      return []
+    }
+
+    var entries: [ComicBook.Entry] = []
+    for case let url as URL in enumerator {
+      let isDirectory = (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
+      guard !isDirectory else { continue }
+      let relative = url.resolvingSymlinksInPath().pathComponents.dropFirst(baseComponentCount).joined(separator: "/")
+      entries.append(ComicBook.Entry(path: relative))
+    }
+    return entries
+  }
+
   /// Image pages as folder-relative paths, sorted by path.
   func pages() throws -> [ComicBook.Page] {
     let fileManager = FileManager.default

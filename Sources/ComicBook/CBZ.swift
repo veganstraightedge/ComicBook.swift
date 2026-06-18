@@ -11,6 +11,16 @@ import ZIPFoundation
 struct CBZ: ComicBookAdapter {
   let path: String
 
+  /// Every file member of the archive, as Entries (paths are the in-archive entry names).
+  func entries() throws -> [ComicBook.Entry] {
+    let archive = try openForReading()
+    var entries: [ComicBook.Entry] = []
+    for entry in archive where entry.type == .file {
+      entries.append(ComicBook.Entry(path: entry.path))
+    }
+    return entries
+  }
+
   /// Image pages inside the archive, sorted by basename.
   func pages() throws -> [ComicBook.Page] {
     let archive = try openForReading()

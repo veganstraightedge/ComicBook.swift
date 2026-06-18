@@ -71,8 +71,16 @@ extension ComicBook {
 /// Internal; one concrete type per `ArchiveType`.
 protocol ComicBookAdapter {
   init(path: String)
+  func entries() throws -> [ComicBook.Entry]
   func pages() throws -> [ComicBook.Page]
   func info() throws -> ComicBook.Info?
   func archive(options: ComicBook.ArchiveOptions) throws -> String
   func extract(options: ComicBook.ExtractOptions) throws -> String
+}
+
+extension ComicBookAdapter {
+  /// Default for formats with no listable members (PDF renders synthetic pages; CBA is a stub).
+  func entries() throws -> [ComicBook.Entry] {
+    throw ComicBookError.notImplemented("entries() not implemented for this format")
+  }
 }
