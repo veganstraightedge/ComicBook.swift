@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **Raised the minimum Swift toolchain to 6.4** (was 6.3) **and the minimum platforms to macOS / iOS / tvOS / watchOS 27** (was 26); `swift-tools-version`, `platforms`, and the documented requirements bumped to match. Building needs Xcode 27+.
+- CI runs on GitHub's `xcode-27` runner (macOS 27, in preview); there is no `macos-27` label yet.
 
 ## [0.4.0] - 2026-06-18
 
