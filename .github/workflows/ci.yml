@@ -9,7 +9,7 @@ on:
 jobs:
   test-macos:
     name: Test on macOS
-    runs-on: macos-26
+    runs-on: xcode-27
 
     steps:
       - name: Checkout code
@@ -36,7 +36,7 @@ jobs:
 
   lint:
     name: Code Formatting
-    runs-on: macos-26
+    runs-on: xcode-27
 
     steps:
       - name: Checkout code
@@ -47,7 +47,7 @@ jobs:
 
   package-validation:
     name: Package Validation
-    runs-on: macos-26
+    runs-on: xcode-27
 
     steps:
       - name: Checkout code
