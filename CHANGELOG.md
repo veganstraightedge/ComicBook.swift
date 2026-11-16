@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-11-16
+
 ### Added
 
 - **`ComicBook.arrangePages(_:)`**: make a folder's page images exactly the given files, in order. Reorders, deletes, and adds pages of an extracted comic in one step: pages are renumbered `page_001…`, stay in the subfolder they were in, and the folder's `ComicInfo.xml` (if any) has its `<Page>` entries and `PageCount` updated to follow them.
