@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-16
+
 ### Fixed
 
 - **The library now builds for iOS.** It declared iOS but could not build there, because ComicInfo.swift read and wrote XML with API that Foundation only has on macOS. CI now builds the library for iOS.
