@@ -48,4 +48,4 @@ Dev-process and architecture notes for ComicBook.swift. Mirrors ComicInfo.swift'
 
 All formats are implemented (CBA/ACE intentionally unsupported, matching the gem). See `CHANGELOG.md`.
 
-iOS is declared in `Package.swift` but does not build yet: ComicInfo.swift uses `XMLDocument` / `XMLElement`, which Foundation only has on macOS.
+The library builds for macOS and iOS; CI builds both. Tests run on macOS only.

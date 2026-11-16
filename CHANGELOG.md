@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **The library now builds for iOS.** It declared iOS but could not build there, because ComicInfo.swift read and wrote XML with API that Foundation only has on macOS. CI now builds the library for iOS.
+
 ### Changed
+
+- **ComicInfo.swift 1.3.0** (was 1.2.0), which builds for iOS.
 
 - **CBR is now read in-process** with [Unrar.swift](https://github.com/mtgto/Unrar.swift) (RARLAB's unrar code) instead of spawning the bundled `lsar` / `unar` tools. No helper binaries ship with the package, nothing is copied to a cache, and the CBR code is no longer macOS-only. Directory members are no longer listed as entries, and an entry whose name would land outside the destination is refused.
 - **Raised the minimum Swift toolchain to 6.4** (was 6.3) **and the minimum platforms to macOS / iOS 27** (was 26); `swift-tools-version`, `platforms`, and the documented requirements bumped to match. Building needs Xcode 27+.
