@@ -35,6 +35,15 @@ struct CBRTests {
     #expect(FileManager.default.fileExists(atPath: destination + "/page3.gif"))
   }
 
+  @Test func testCbrExtractImagesOnly() throws {
+    let destination = tempPath(extension: "cb")
+    defer { try? FileManager.default.removeItem(atPath: destination) }
+    let options = ComicBook.ExtractOptions(to: destination, imagesOnly: true)
+    _ = try ComicBook.load(try fixture("with_comicinfo")).extract(options: options)
+    let extracted = try FileManager.default.contentsOfDirectory(atPath: destination).sorted()
+    #expect(extracted == ["page001.png", "page002.png", "page003.png", "page004.png"])
+  }
+
   @Test func testCbrArchiveNotSupported() throws {
     #expect(throws: ComicBookError.self) {
       try ComicBook.load(try fixture("simple")).archive(options: ComicBook.ArchiveOptions())

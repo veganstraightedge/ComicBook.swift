@@ -5,11 +5,12 @@
 
 import ComicInfo
 import Foundation
+import Unrar
 
 /// Adapter for CBR (RAR) archives.
 ///
-/// Read-only (RAR creation is proprietary), via the bundled `lsar`/`unar` (macOS only — process
-/// spawning is unavailable in the iOS sandbox).
+/// Read-only (RAR creation is proprietary), decoded in-process by Unrar.swift (RARLAB's unrar code),
+/// so it works on both macOS and iOS.
 struct CBR: ComicBookAdapter {
   let path: String
 
@@ -17,58 +18,74 @@ struct CBR: ComicBookAdapter {
     throw ComicBookError.notSupported("CBR archiving not supported (RAR is proprietary)")
   }
 
-  #if os(macOS)
-    /// Every member of the archive, as Entries (paths are the names lsar reports).
-    func entries() throws -> [ComicBook.Entry] {
-      try CLIHelpers.lsarList(path).map { ComicBook.Entry(path: $0) }
+  /// Every file member of the archive, as Entries (paths are the in-archive entry names).
+  func entries() throws -> [ComicBook.Entry] {
+    try fileEntries(in: try openForReading()).map { ComicBook.Entry(path: $0.fileName) }
+  }
+
+  /// Read `ComicInfo.xml` from the archive, if present.
+  func info() throws -> ComicBook.Info? {
+    let archive = try openForReading()
+    guard let entry = try fileEntries(in: archive).first(where: { $0.fileName == "ComicInfo.xml" }) else {
+      return nil
     }
+    let data = try read(entry, from: archive)
+    guard let xml = String(data: data, encoding: .utf8) else { return nil }
+    return try ComicInfo.load(fromXML: xml)
+  }
 
-    /// Read `ComicInfo.xml` (extracting to a temp folder, since RAR has no random access here).
-    func info() throws -> ComicBook.Info? {
-      guard try CLIHelpers.lsarList(path).contains("ComicInfo.xml") else { return nil }
-      let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-      try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
-      defer { try? FileManager.default.removeItem(at: tempDir) }
+  /// Extract the archive into a folder (default `<basename>.cb`).
+  ///
+  /// Returns the destination path.
+  func extract(options: ComicBook.ExtractOptions) throws -> String {
+    let destination = ComicBook.defaultOutputPath(forSource: path, newExtension: "cb", to: options.to)
+    let destinationURL = URL(fileURLWithPath: destination).standardizedFileURL
 
-      try CLIHelpers.unarExtract(path, to: tempDir.path)
-      let xmlPath = tempDir.appendingPathComponent("ComicInfo.xml").path
-      guard FileManager.default.fileExists(atPath: xmlPath) else { return nil }
-      return try ComicInfo.load(from: xmlPath)
-    }
-
-    /// Extract the archive into a folder (default `<basename>.cb`).
-    ///
-    /// Returns the destination path.
-    func extract(options: ComicBook.ExtractOptions) throws -> String {
-      let destination = ComicBook.defaultOutputPath(forSource: path, newExtension: "cb", to: options.to)
-      do {
-        try FileManager.default.createDirectory(
-          at: URL(fileURLWithPath: destination), withIntermediateDirectories: true)
-        try CLIHelpers.unarExtract(path, to: destination)
-        if options.imagesOnly {
-          // unar can't filter, so remove the non-images afterward (matching the gem).
-          for entry in try CLIHelpers.lsarList(path) where !ComicBook.isImageFile(entry) {
-            try? FileManager.default.removeItem(atPath: (destination as NSString).appendingPathComponent(entry))
-          }
+    do {
+      let archive = try openForReading()
+      try FileManager.default.createDirectory(at: destinationURL, withIntermediateDirectories: true)
+      for entry in try fileEntries(in: archive) {
+        if options.imagesOnly && !ComicBook.isImageFile(entry.fileName) { continue }
+        let fileURL = destinationURL.appendingPathComponent(entry.fileName).standardizedFileURL
+        // Refuse entries that would land outside the destination (`../` in the entry name).
+        guard fileURL.path.hasPrefix(destinationURL.path + "/") else {
+          throw ComicBookError.extractionError("Refusing to extract '\(entry.fileName)' outside the destination")
         }
-      } catch let error as ComicBookError {
-        throw error
-      } catch {
-        throw ComicBookError.extractionError(error.localizedDescription)
+        try FileManager.default.createDirectory(
+          at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try read(entry, from: archive).write(to: fileURL)
       }
+    } catch let error as ComicBookError {
+      throw error
+    } catch {
+      throw ComicBookError.extractionError(error.localizedDescription)
+    }
 
-      if options.deleteOriginal { try? FileManager.default.removeItem(atPath: path) }
-      return destination
+    if options.deleteOriginal { try? FileManager.default.removeItem(atPath: path) }
+    return destination
+  }
+
+  private func openForReading() throws -> Unrar.Archive {
+    do {
+      return try Unrar.Archive(path: path)
+    } catch {
+      throw ComicBookError.extractionError("Could not open '\(path)': \(error)")
     }
-  #else
-    func entries() throws -> [ComicBook.Entry] {
-      throw ComicBookError.notSupported("CBR (RAR) is only supported on macOS")
+  }
+
+  private func fileEntries(in archive: Unrar.Archive) throws -> [Unrar.Entry] {
+    do {
+      return try archive.entries().filter { !$0.directory }
+    } catch {
+      throw ComicBookError.extractionError("Could not list '\(path)': \(error)")
     }
-    func info() throws -> ComicBook.Info? {
-      throw ComicBookError.notSupported("CBR (RAR) is only supported on macOS")
+  }
+
+  private func read(_ entry: Unrar.Entry, from archive: Unrar.Archive) throws -> Data {
+    do {
+      return try archive.extract(entry)
+    } catch {
+      throw ComicBookError.extractionError("Could not extract '\(entry.fileName)' from '\(path)': \(error)")
     }
-    func extract(options: ComicBook.ExtractOptions) throws -> String {
-      throw ComicBookError.notSupported("CBR (RAR) is only supported on macOS")
-    }
-  #endif
+  }
 }
