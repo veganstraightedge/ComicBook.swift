@@ -9,7 +9,7 @@ import Foundation
 /// Adapter for CBR (RAR) archives.
 ///
 /// Read-only (RAR creation is proprietary), via the bundled `lsar`/`unar` (macOS only — process
-/// spawning is unavailable in the iOS/tvOS/watchOS sandbox).
+/// spawning is unavailable in the iOS sandbox).
 struct CBR: ComicBookAdapter {
   let path: String
 
