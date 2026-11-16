@@ -8,9 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- **CBR is now read in-process** with [Unrar.swift](https://github.com/mtgto/Unrar.swift) (RARLAB's unrar code) instead of spawning the bundled `lsar` / `unar` tools. No helper binaries ship with the package, nothing is copied to a cache, and the CBR code is no longer macOS-only. Directory members are no longer listed as entries, and an entry whose name would land outside the destination is refused.
 - **Raised the minimum Swift toolchain to 6.4** (was 6.3) **and the minimum platforms to macOS / iOS 27** (was 26); `swift-tools-version`, `platforms`, and the documented requirements bumped to match. Building needs Xcode 27+.
 - `platforms` now declares only macOS and iOS; the other Apple platforms are no longer declared or documented.
 - CI runs on GitHub's `xcode-27` runner (macOS 27, in preview); there is no `macos-27` label yet.
+
+### Removed
+- `ComicBook.rarToolsDirectory`: there are no helper tools left to point at.
+- `ComicBookError.dependencyMissing`: nothing can throw it now.
 
 ## [0.4.0] - 2026-06-18
 

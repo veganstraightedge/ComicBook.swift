@@ -13,7 +13,7 @@ A [`comicbook`](https://github.com/veganstraightedge/comicbook) Ruby gem is also
 ## Features
 
 - 📦 Read / extract / archive comic book archives: **`.cbz`**, **`.cbt`**, **`.cb7`** (7-Zip), **`.cb`** folders.
-- 📤 Extract only: **`.cbr`** (RAR, macOS only) and **PDF**→images. `.cba` (ACE) is unsupported.
+- 📤 Extract only: **`.cbr`** (RAR) and **PDF**→images. `.cba` (ACE) is unsupported.
 - 🔎 List image **pages** and read **`ComicInfo.xml`** metadata
   (via [ComicInfo.swift](https://github.com/veganstraightedge/ComicInfo.swift)).
 - 🧰 A `comicbook` command-line tool.
@@ -22,7 +22,6 @@ A [`comicbook`](https://github.com/veganstraightedge/comicbook) Ruby gem is also
 
 - Swift 6.4+
 - macOS 27+ / iOS 27+
-  - `.cbr` is macOS only: it runs the bundled `lsar` / `unar` tools, and iOS apps cannot spawn processes.
   - iOS is declared but does not build yet, because [ComicInfo.swift](https://github.com/veganstraightedge/ComicInfo.swift) uses XML API that Foundation only has on macOS.
 
 ## Installation
@@ -71,4 +70,4 @@ MIT — see [LICENSE.md](LICENSE.md).
 ## Acknowledgments
 
 - The [Anansi Project](https://anansi-project.github.io/) for the ComicInfo standard.
-- [The Unarchiver](https://theunarchiver.com/) (`unar`/`lsar`) for RAR support.
+- [Unrar.swift](https://github.com/mtgto/Unrar.swift) and RARLAB's [UnRAR](https://www.rarlab.com/rar_add.htm) source for RAR support. UnRAR source code may be used in any software to handle RAR archives without limitations free of charge, but cannot be used to develop RAR (WinRAR) compatible archiver and to re-create RAR compression algorithm, which is proprietary.
