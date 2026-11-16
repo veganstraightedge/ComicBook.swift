@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Raised the minimum Swift toolchain to 6.4** (was 6.3) **and the minimum platforms to macOS / iOS 27** (was 26); `swift-tools-version`, `platforms`, and the documented requirements bumped to match. Building needs Xcode 27+.
 - `platforms` now declares only macOS and iOS; the other Apple platforms are no longer declared or documented.
 - CI runs on GitHub's `xcode-27` runner (macOS 27, in preview); there is no `macos-27` label yet.
+- **PLzmaSDK 1.6.3** (was 1.6.2), our fork rebuilt on upstream's latest source (LZMA SDK build 1466, was 1448). `doc/plzmasdk-fork.md` documents the fork and how to sync it.
 
 ### Removed
 - `ComicBook.rarToolsDirectory`: there are no helper tools left to point at.
