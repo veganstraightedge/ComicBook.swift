@@ -42,8 +42,7 @@ let package = Package(
         .product(name: "SWCompression", package: "SWCompression"),
         .product(name: "PLzmaSDK", package: "PLzmaSDK"),
         .product(name: "Unrar", package: "Unrar.swift"),
-      ],
-      resources: [.copy("Resources")]
+      ]
     ),
     .executableTarget(
       name: "ComicBookCLI",

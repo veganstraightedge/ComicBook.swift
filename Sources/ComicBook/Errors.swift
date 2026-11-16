@@ -28,9 +28,6 @@ public enum ComicBookError: Error, Equatable {
   /// The destination path already exists and would be overwritten.
   case destinationExists(String)
 
-  /// A required external tool (e.g. `unar`, `lsar`, `7zz`) is missing.
-  case dependencyMissing(String)
-
   /// An archive could not be created.
   case archiveError(String)
 
@@ -49,7 +46,6 @@ extension ComicBookError: LocalizedError {
     case .notImplemented(let message): return message
     case .alreadyExtracted(let path): return "Cannot extract '\(path)': it is already extracted"
     case .destinationExists(let path): return "Destination already exists: '\(path)'"
-    case .dependencyMissing(let message): return message
     case .archiveError(let message): return "Archive error: \(message)"
     case .extractionError(let message): return "Extraction error: \(message)"
     }
