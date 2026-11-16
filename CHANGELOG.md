@@ -8,12 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+
 - **CBR is now read in-process** with [Unrar.swift](https://github.com/mtgto/Unrar.swift) (RARLAB's unrar code) instead of spawning the bundled `lsar` / `unar` tools. No helper binaries ship with the package, nothing is copied to a cache, and the CBR code is no longer macOS-only. Directory members are no longer listed as entries, and an entry whose name would land outside the destination is refused.
 - **Raised the minimum Swift toolchain to 6.4** (was 6.3) **and the minimum platforms to macOS / iOS 27** (was 26); `swift-tools-version`, `platforms`, and the documented requirements bumped to match. Building needs Xcode 27+.
 - `platforms` now declares only macOS and iOS; the other Apple platforms are no longer declared or documented.
 - CI runs on GitHub's `xcode-27` runner (macOS 27, in preview); there is no `macos-27` label yet.
+- **PLzmaSDK 1.6.3** (was 1.6.2), our fork rebuilt on upstream's latest source (LZMA SDK build 1466, was 1448). `doc/plzmasdk-fork.md` documents the fork and how to sync it.
 
 ### Removed
+
 - `ComicBook.rarToolsDirectory`: there are no helper tools left to point at.
 - `ComicBookError.dependencyMissing`: nothing can throw it now.
 
@@ -22,9 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Version jumps 0.2.0 → 0.4.0 to track the `comicbook` gem (0.3.0 was never released).
 
 ### Added
+
 - `ComicBook.files(type:)` — list a comic's files, filtered by `.all` (default), `.images`, or `.imagesAndInfo` (images plus `ComicInfo.xml` / `MetronInfo.xml`), as `ComicBook.Entry` values that answer `isImage` / `isInfo`. Mirrors the `comicbook` gem 0.4.0.
 
 ### Changed
+
 - **The loaded comic is now `ComicBook` itself, not `ComicBook.Comic`.** `ComicBook` is a `struct` you construct directly — `ComicBook(path:).pages()` — mirroring the gem's `ComicBook.new(path).pages`. `ComicBook.load(_:)` now returns a `ComicBook`. Nested types (`ComicBook.Page`, `ComicBook.Info`, …) and the static entry points are unchanged.
 - **`archive` now includes every file in the source folder by default** (was images-only). `ArchiveOptions.contents` (a `ComicBook.Contents`) selects what to write: `.all` (default), `.images` (the previous behavior), or `.imagesAndInfo` (images plus `ComicInfo.xml` / `MetronInfo.xml`). Applies to CBZ / CBT / CB7; CB (folder) already keeps the whole folder. Mirrors the `comicbook` gem 0.4.0.
 - Pages are ordered by full entry path; folder pages now use folder-relative paths (previously absolute), consistent with `.cb` and archive sources.
@@ -32,6 +37,7 @@ Version jumps 0.2.0 → 0.4.0 to track the `comicbook` gem (0.3.0 was never rele
 ## [0.2.0] - 2026-06-17
 
 ### Changed
+
 - **PLzmaSDK is now consumed by version, from a fork** ([veganstraightedge/PLzmaSDK](https://github.com/veganstraightedge/PLzmaSDK) `1.6.2`) with the `unsafeFlags` (`-fPIC`/`-fno-rtti`) removed. Those flags forced a `revision:` pin on PLzmaSDK, which made **ComicBook.swift itself unconsumable via `from:`** by downstream packages (SPM rejects depending by version on a package with a revision-pinned/unstable dependency). With the fork, ComicBook resolves cleanly via `from:`. No CB7 behavior change — read and write are unchanged.
 
 ## [0.1.0] - 2026-06-16

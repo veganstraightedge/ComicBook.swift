@@ -28,7 +28,7 @@ let package = Package(
     // Fork of PLzmaSDK with the `unsafeFlags` (-fPIC/-fno-rtti) removed, so it can be consumed by
     // version. Upstream's flags forced a revision pin, which in turn made *this* package unconsumable
     // via `from:` for downstream packages.
-    .package(url: "https://github.com/veganstraightedge/PLzmaSDK.git", from: "1.6.2"),
+    .package(url: "https://github.com/veganstraightedge/PLzmaSDK.git", from: "1.6.3"),
     .package(url: "https://github.com/mtgto/Unrar.swift.git", from: "0.5.4"),
   ],
   targets: [

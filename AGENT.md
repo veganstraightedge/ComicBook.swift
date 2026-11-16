@@ -19,7 +19,7 @@ Dev-process and architecture notes for ComicBook.swift. Mirrors ComicInfo.swift'
 - `public struct ComicBook` is **both the loaded comic and the namespace**: a value with `path` +
   detected `ArchiveType` (mirroring the gem's `ComicBook` class — `ComicBook(path:).pages()`), while
   also nesting all domain types, spread across files via `extension ComicBook { ... }` (Swift can't
-  declare nested types in extensions of *other* files, so each file reopens it).
+  declare nested types in extensions of _other_ files, so each file reopens it).
 - The one top-level type is `ComicBookError` (in `Errors.swift`), like `ComicInfoError`.
 - `ComicBook.Info` is a `typealias` for `ComicInfo.Issue` (the gem's `ComicBook::Info = ComicInfo::Issue`).
 - Per-format adapters conform to the internal `ComicBookAdapter` protocol (`pages`/`info`/`archive`/
@@ -27,15 +27,15 @@ Dev-process and architecture notes for ComicBook.swift. Mirrors ComicInfo.swift'
 
 ## Format strategy
 
-| Format | Library | Notes |
-|---|---|---|
-| CBZ | ZIPFoundation | read + write |
-| CBT | SWCompression (TAR) | read + write |
-| CB7 | PLzmaSDK | read + write, in-process |
-| CBR | Unrar.swift (RARLAB unrar) | read-only, in-process |
-| PDF | CoreGraphics / ImageIO | extract-only, native |
-| CB / folder | FileManager | uncompressed |
-| CBA | — | ACE; unimplemented stubs (matches gem) |
+| Format      | Library                                         | Notes                                  |
+| ----------- | ----------------------------------------------- | -------------------------------------- |
+| CBZ         | ZIPFoundation                                   | read + write                           |
+| CBT         | SWCompression (TAR)                             | read + write                           |
+| CB7         | PLzmaSDK (our fork; see `doc/plzmasdk-fork.md`) | read + write, in-process               |
+| CBR         | Unrar.swift (RARLAB unrar)                      | read-only, in-process                  |
+| PDF         | CoreGraphics / ImageIO                          | extract-only, native                   |
+| CB / folder | FileManager                                     | uncompressed                           |
+| CBA         | —                                               | ACE; unimplemented stubs (matches gem) |
 
 ## Key behaviors (match the gem)
 
