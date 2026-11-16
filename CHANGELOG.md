@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Raised the minimum Swift toolchain to 6.4** (was 6.3) **and the minimum platforms to macOS / iOS / tvOS / watchOS 27** (was 26); `swift-tools-version`, `platforms`, and the documented requirements bumped to match. Building needs Xcode 27+.
+
 ## [0.4.0] - 2026-06-18
 
 Version jumps 0.2.0 → 0.4.0 to track the `comicbook` gem (0.3.0 was never released).
