@@ -32,7 +32,7 @@ Dev-process and architecture notes for ComicBook.swift. Mirrors ComicInfo.swift'
 | CBZ | ZIPFoundation | read + write |
 | CBT | SWCompression (TAR) | read + write |
 | CB7 | PLzmaSDK | read + write, in-process |
-| CBR | bundled `lsar`/`unar` | read-only, shells out (macOS only; throws `notSupported` elsewhere) |
+| CBR | Unrar.swift (RARLAB unrar) | read-only, in-process |
 | PDF | CoreGraphics / ImageIO | extract-only, native |
 | CB / folder | FileManager | uncompressed |
 | CBA | — | ACE; unimplemented stubs (matches gem) |
@@ -48,4 +48,4 @@ Dev-process and architecture notes for ComicBook.swift. Mirrors ComicInfo.swift'
 
 All formats are implemented (CBA/ACE intentionally unsupported, matching the gem). See `CHANGELOG.md`.
 
-iOS is declared in `Package.swift` but does not build yet: ComicInfo.swift uses `XMLDocument` / `XMLElement`, which Foundation only has on macOS. CBR can never work on iOS as written, since it spawns processes.
+iOS is declared in `Package.swift` but does not build yet: ComicInfo.swift uses `XMLDocument` / `XMLElement`, which Foundation only has on macOS.
