@@ -20,10 +20,10 @@ with no comment. If upstream ever drops them, retire the fork and depend on upst
 
 ## Versions
 
-| Fork tag | Built on upstream | Upstream build number |
-|---|---|---:|
-| `1.6.2` | `master` just after upstream's 1.6.1 | 1448 |
-| `1.6.3` | `master` just after upstream's 1.6.2 | 1466 |
+| Fork tag | Built on upstream                    | Upstream build number |
+| -------- | ------------------------------------ | --------------------: |
+| `1.6.2`  | `master` just after upstream's 1.6.1 |                  1448 |
+| `1.6.3`  | `master` just after upstream's 1.6.2 |                  1466 |
 
 The fork's numbers do not match upstream's: our `1.6.2` is older code than upstream's `1.6.2`.
 Treat the fork's tags as their own sequence.
