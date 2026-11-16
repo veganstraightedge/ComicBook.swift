@@ -50,6 +50,16 @@ let folder = try comic.extract()
 let cbz = try ComicBook.archive("./pages", options: .init(to: "Issue1.cbz"))
 ```
 
+Which formats can be opened or written is public, as is what counts as a page image:
+
+```swift
+ComicBook.ArchiveType.allCases.filter(\.isReadable)   // every type but .cba
+ComicBook.ArchiveType.allCases.filter(\.isWritable)   // .cb, .cb7, .cbt, .cbz
+ComicBook.ArchiveType(fileExtension: "CBR")           // .cbr
+ComicBook.imageFileExtensions                         // ["bmp", "gif", "jpeg", "jpg", "png", "webp"]
+ComicBook.isImageFile("page1.JPG")                    // true
+```
+
 Archiving includes all files by default; `ArchiveOptions.contents` selects `.all` / `.images` / `.imagesAndInfo` (images + `ComicInfo.xml` / `MetronInfo.xml`). Extraction is lossless unless `imagesOnly`.
 
 ## CLI
