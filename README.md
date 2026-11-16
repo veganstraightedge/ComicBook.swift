@@ -12,16 +12,18 @@ A [`comicbook`](https://github.com/veganstraightedge/comicbook) Ruby gem is also
 
 ## Features
 
-- 📦 Read / extract / archive comic book archives: **`.cbz`**, **`.cbt`**, **`.cb`** folders.
+- 📦 Read / extract / archive comic book archives: **`.cbz`**, **`.cbt`**, **`.cb7`** (7-Zip), **`.cb`** folders.
+- 📤 Extract only: **`.cbr`** (RAR, macOS only) and **PDF**→images. `.cba` (ACE) is unsupported.
 - 🔎 List image **pages** and read **`ComicInfo.xml`** metadata
   (via [ComicInfo.swift](https://github.com/veganstraightedge/ComicInfo.swift)).
 - 🧰 A `comicbook` command-line tool.
-- 🚧 In progress: **`.cb7`** (7-Zip), **`.cbr`** (RAR, read-only), and **PDF**→images. `.cba` (ACE) unsupported.
 
 ## Requirements
 
 - Swift 6.4+
-- macOS 27+ / iOS 27+ (archiving/extracting shell-outs for CB7/CBR are macOS-only)
+- macOS 27+ / iOS 27+
+  - `.cbr` is macOS only: it runs the bundled `lsar` / `unar` tools, and iOS apps cannot spawn processes.
+  - iOS is declared but does not build yet, because [ComicInfo.swift](https://github.com/veganstraightedge/ComicInfo.swift) uses XML API that Foundation only has on macOS.
 
 ## Installation
 
@@ -29,7 +31,7 @@ A [`comicbook`](https://github.com/veganstraightedge/comicbook) Ruby gem is also
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/veganstraightedge/ComicBook.swift.git", from: "0.2.0")
+  .package(url: "https://github.com/veganstraightedge/ComicBook.swift.git", from: "0.4.0")
 ]
 ```
 
@@ -50,7 +52,7 @@ let folder = try comic.extract()
 let cbz = try ComicBook.archive("./pages", options: .init(to: "Issue1.cbz"))
 ```
 
-Archiving includes all files by default; `ArchiveOptions.contents` selects `.all` / `.imagesOnly` / `.imagesAndInfo` (images + `ComicInfo.xml` / `MetronInfo.xml`). Extraction is lossless unless `imagesOnly`.
+Archiving includes all files by default; `ArchiveOptions.contents` selects `.all` / `.images` / `.imagesAndInfo` (images + `ComicInfo.xml` / `MetronInfo.xml`). Extraction is lossless unless `imagesOnly`.
 
 ## CLI
 

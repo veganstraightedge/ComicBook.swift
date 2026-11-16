@@ -11,7 +11,7 @@ Dev-process and architecture notes for ComicBook.swift. Mirrors ComicInfo.swift'
 ## Development
 
 - Swift 6.4+, Swift Testing (not XCTest), `swift format` (2-space, `.swift-format`).
-- `swift build` / `swift test` / `swift format lint --recursive Sources Tests`.
+- `script/{build,test,lint,format,run}`; `script/lint` is `swift format lint --strict` (warnings fail).
 - One type per file; file header `//\n// File.swift\n// ComicBook\n//`.
 
 ## Architecture (CRITICAL — same pattern as ComicInfo.swift)
@@ -31,19 +31,21 @@ Dev-process and architecture notes for ComicBook.swift. Mirrors ComicInfo.swift'
 |---|---|---|
 | CBZ | ZIPFoundation | read + write |
 | CBT | SWCompression (TAR) | read + write |
-| CB7 | SWCompression (read) + `7zz` (write) | write shells out (macOS) |
-| CBR | `lsar`/`unar` | read-only, shells out (macOS) |
-| PDF | PDFKit / ImageIO | extract-only, native |
+| CB7 | PLzmaSDK | read + write, in-process |
+| CBR | bundled `lsar`/`unar` | read-only, shells out (macOS only; throws `notSupported` elsewhere) |
+| PDF | CoreGraphics / ImageIO | extract-only, native |
 | CB / folder | FileManager | uncompressed |
 | CBA | — | ACE; unimplemented stubs (matches gem) |
 
 ## Key behaviors (match the gem)
 
-- Archiving includes **all files by default** (`ArchiveOptions.contents`: `.all` / `.imagesOnly` / `.imagesAndInfo`); extraction is lossless unless `imagesOnly`.
+- Archiving includes **all files by default** (`ArchiveOptions.contents`: `.all` / `.images` / `.imagesAndInfo`); extraction is lossless unless `ExtractOptions.imagesOnly`.
 - Default extract dir = `<basename>.cb`; default archive ext = `.cbz`.
-- Page `path`: archive → entry name; `.cb` → relative; top-level folder → absolute.
+- Page `path`: archive → entry name; `.cb` or plain folder → relative to the folder. Pages are ordered by full path.
 - Image detection is extension-based, case-insensitive: `.jpg .jpeg .png .gif .bmp .webp`.
 
 ## Status
 
 All formats are implemented (CBA/ACE intentionally unsupported, matching the gem). See `CHANGELOG.md`.
+
+iOS is declared in `Package.swift` but does not build yet: ComicInfo.swift uses `XMLDocument` / `XMLElement`, which Foundation only has on macOS. CBR can never work on iOS as written, since it spawns processes.
