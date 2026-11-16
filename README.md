@@ -50,6 +50,17 @@ let folder = try comic.extract()
 let cbz = try ComicBook.archive("./pages", options: .init(to: "Issue1.cbz"))
 ```
 
+Reorder, delete, and add pages of an extracted comic, then archive it again:
+
+```swift
+let extracted = try ComicBook.load(folder)
+// Each source is a page already in the folder (relative path) or any image file (absolute path).
+try extracted.arrangePages(["page3.jpg", "page1.jpg", "/Users/me/Desktop/extra.png"])
+try extracted.archive(options: .init(to: "Issue1.cbz"))
+```
+
+Pages are renumbered `page_001…` in the given order, page images left out are deleted, and a `ComicInfo.xml` in the folder has its `<Page>` entries and `PageCount` updated to match.
+
 Which formats can be opened or written is public, as is what counts as a page image:
 
 ```swift
