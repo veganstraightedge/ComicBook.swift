@@ -16,7 +16,9 @@ version". It only touches `Package.swift`. The flags were optimization-only.
 
 An upstream request to remove the flags
 ([OlehKulykov/PLzmaSDK#7](https://github.com/OlehKulykov/PLzmaSDK/issues/7)) was closed in 2021
-with no comment. If upstream ever drops them, retire the fork and depend on upstream directly.
+with no comment. We asked again in November 2026
+([OlehKulykov/PLzmaSDK#42](https://github.com/OlehKulykov/PLzmaSDK/issues/42)); check there for an
+answer before syncing. If upstream ever drops them, retire the fork and depend on upstream directly.
 
 ## Versions
 
