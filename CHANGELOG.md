@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Format support is public**, so apps need not keep their own lists. `ComicBook.ArchiveType` is `CaseIterable` and gains `isReadable` (everything but `.cba`), `isWritable` (`.cbz`, `.cb7`, `.cbt`, `.cb`), `fileExtension`, and `init?(fileExtension:)`.
+- `ComicBook.imageFileExtensions` and a public `ComicBook.isImageFile(_:)`: the file extensions that count as page images.
+
 ### Changed
 
 - **ComicInfo.swift 1.4.0** (was 1.3.0).
