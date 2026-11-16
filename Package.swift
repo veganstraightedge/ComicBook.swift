@@ -21,7 +21,7 @@ let package = Package(
     ),
   ],
   dependencies: [
-    .package(url: "https://github.com/veganstraightedge/ComicInfo.swift.git", from: "1.3.0"),
+    .package(url: "https://github.com/veganstraightedge/ComicInfo.swift.git", from: "1.4.0"),
     .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.8.2"),
     .package(url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.20"),
     .package(url: "https://github.com/tsolomko/SWCompression.git", from: "4.9.1"),
