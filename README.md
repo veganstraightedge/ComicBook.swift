@@ -22,7 +22,6 @@ A [`comicbook`](https://github.com/veganstraightedge/comicbook) Ruby gem is also
 
 - Swift 6.4+
 - macOS 27+ / iOS 27+
-  - iOS is declared but does not build yet, because [ComicInfo.swift](https://github.com/veganstraightedge/ComicInfo.swift) uses XML API that Foundation only has on macOS.
 
 ## Installation
 

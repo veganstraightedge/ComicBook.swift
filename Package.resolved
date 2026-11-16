@@ -1,6 +1,15 @@
 {
-  "originHash" : "c90888c07c969abfa8e8cf6c418e39dc9d7f923753189be91b6ff43666c36841",
+  "originHash" : "3da6f16dd9e8f49bcca371a7d06d4ed8eb818d37bdeb75c86dcc5bb0ca42d478",
   "pins" : [
+    {
+      "identity" : "aexml",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tadija/AEXML.git",
+      "state" : {
+        "revision" : "d2083adcf4d1383c858f5d3d0f24256459d3f59a",
+        "version" : "4.7.4"
+      }
+    },
     {
       "identity" : "bitbytedata",
       "kind" : "remoteSourceControl",
@@ -15,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/veganstraightedge/ComicInfo.swift.git",
       "state" : {
-        "revision" : "7bb4ae89130d1b63dff359d036622df7bd0f99e4",
-        "version" : "1.2.0"
+        "revision" : "96be1aa90f03b43522977c8646786c7333e06250",
+        "version" : "1.3.0"
       }
     },
     {
