@@ -7,6 +7,9 @@ import ComicInfo
 import Foundation
 
 extension ComicBook {
+  /// The page file name template `arrangePages` uses when it is given none.
+  public static let defaultPageFilenameTemplate = "page_{page:3}"
+
   /// Make this folder's page images exactly `sources`, in that order.
   ///
   /// Use it to reorder, delete, and add pages of an extracted comic before archiving it again:
@@ -19,7 +22,10 @@ extension ComicBook {
   /// Each source is an image file: a path relative to the folder for a page already in it, or an
   /// absolute path for a file anywhere (it is copied in). Afterwards:
   ///
-  /// - The pages are named `page_001`, `page_002`, … in the given order, keeping their extensions.
+  /// - The pages are named from `template` in the given order, keeping their extensions:
+  ///   `page_001`, `page_002`, … unless you pass another. The template is filled in by
+  ///   `ComicInfo.Issue.pageFilename`, so it can use `{page}` and the comic's details, such as
+  ///   `{series}_{number:3}_{page:4}`, and the names always sort in page order.
   /// - They are in the folder their pages were in before (the shared parent, if there were several).
   /// - Page images left out of `sources` are deleted. Files that are not images are left alone.
   /// - If the folder has a `ComicInfo.xml`, its `<Page>` entries and `PageCount` are updated to
@@ -27,12 +33,16 @@ extension ComicBook {
   ///
   /// Only a folder or `.cb` can be arranged; extract an archive first.
   ///
-  /// - Parameter sources: The image files that should be the comic's pages, in page order.
+  /// - Parameters:
+  ///   - sources: The image files that should be the comic's pages, in page order.
+  ///   - template: How to name the page files, without an extension.
   /// - Returns: The comic's pages afterwards.
   /// - Throws: `ComicBookError.notSupported` for an archive, `.pathDoesNotExist` for a missing
   ///   source, `.unsupportedFileType` for a source that is not an image. Nothing is changed then.
   @discardableResult
-  public func arrangePages(_ sources: [String]) throws -> [Page] {
+  public func arrangePages(
+    _ sources: [String], template: String = ComicBook.defaultPageFilenameTemplate
+  ) throws -> [Page] {
     guard type == .folder || type == .cb else {
       throw ComicBookError.notSupported("Cannot arrange the pages of a \(type.rawValue) file; extract it first")
     }
@@ -46,7 +56,8 @@ extension ComicBook {
     defer { try? FileManager.default.removeItem(at: staging) }
 
     do {
-      let staged = try stage(resolved.map(\.url), in: staging)
+      let issue = try info(in: folderURL) ?? ComicInfo.Issue()
+      let staged = try stage(resolved.map(\.url), in: staging, template: template, issue: issue)
       for previous in previousPages {
         try FileManager.default.removeItem(at: folderURL.appendingPathComponent(previous))
       }
@@ -87,14 +98,15 @@ extension ComicBook {
   }
 
   /// Copy the files into `staging` under their new page names, in order.
-  private func stage(_ files: [URL], in staging: URL) throws -> [URL] {
+  private func stage(
+    _ files: [URL], in staging: URL, template: String, issue: ComicInfo.Issue
+  ) throws -> [URL] {
     try FileManager.default.createDirectory(at: staging, withIntermediateDirectories: true)
-    let width = max(3, String(files.count).count)
 
     var staged: [URL] = []
     for (index, file) in files.enumerated() {
-      let number = String(repeating: "0", count: width - String(index + 1).count) + String(index + 1)
-      let destination = staging.appendingPathComponent("page_\(number).\(file.pathExtension)")
+      let name = issue.pageFilename(template: template, page: index + 1, of: files.count)
+      let destination = staging.appendingPathComponent("\(name).\(file.pathExtension)")
       try FileManager.default.copyItem(at: file, to: destination)
       staged.append(destination)
     }
@@ -117,12 +129,16 @@ extension ComicBook {
     return shared.joined(separator: "/")
   }
 
+  /// The folder's `ComicInfo.xml`, or nil when it has none.
+  private func info(in folderURL: URL) throws -> ComicInfo.Issue? {
+    let infoURL = folderURL.appendingPathComponent("ComicInfo.xml")
+    guard FileManager.default.fileExists(atPath: infoURL.path) else { return nil }
+    return try ComicInfo.load(from: infoURL)
+  }
+
   /// Bring the folder's `ComicInfo.xml` (if any) in step with the rearranged pages.
   private func updateInfo(in folderURL: URL, order: [Int?]) throws {
-    let infoURL = folderURL.appendingPathComponent("ComicInfo.xml")
-    guard FileManager.default.fileExists(atPath: infoURL.path) else { return }
-
-    let issue = try ComicInfo.load(from: infoURL)
-    try issue.rearrangingPages(order).save(to: infoURL)
+    guard let issue = try info(in: folderURL) else { return }
+    try issue.rearrangingPages(order).save(to: folderURL.appendingPathComponent("ComicInfo.xml"))
   }
 }

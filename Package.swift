@@ -21,7 +21,7 @@ let package = Package(
     ),
   ],
   dependencies: [
-    .package(url: "https://github.com/veganstraightedge/ComicInfo.swift.git", from: "1.7.0"),
+    .package(url: "https://github.com/veganstraightedge/ComicInfo.swift.git", from: "1.8.0"),
     .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.8.2"),
     .package(url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.20"),
     // Fork of PLzmaSDK with the `unsafeFlags` (-fPIC/-fno-rtti) removed, so it can be consumed by

@@ -61,6 +61,12 @@ try extracted.archive(options: .init(to: "Issue1.cbz"))
 
 Pages are renumbered `page_001…` in the given order, page images left out are deleted, and a `ComicInfo.xml` in the folder has its `<Page>` entries and `PageCount` updated to match.
 
+Pass a template to name the page files another way. It can use `{page}` and the comic's details, and the names always sort in page order:
+
+```swift
+try extracted.arrangePages(sources, template: "{series}_{number:3}_{page:4}")  // Saga_007_0001.jpg …
+```
+
 A comic's `type` comes from what the file contains, not its extension, so a mislabelled archive still opens:
 
 ```swift
