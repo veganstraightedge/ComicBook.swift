@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-18
+
 ### Changed
 
 - **ComicInfo.swift 1.7.0** (was 1.5.0) is the minimum version.
