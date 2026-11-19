@@ -37,6 +37,40 @@ struct CBTTests {
     #expect(try ComicBook.load(cbtPath).info()?.title == "Tarred")
   }
 
+  /// A known bug, kept here so it is not forgotten: macOS `tar` stores a file's extended attributes
+  /// as a hidden `._name` member beside it, and we treat those members as files and pages.
+  ///
+  /// When this is fixed the known-issue markers start failing; remove them then. They are marked
+  /// intermittent because whether `tar` writes the members depends on the system it runs on.
+  @Test func testMacOSTarAppleDoubleMembersAreNotPages() throws {
+    let src = try makeFixtureDirectory(["page1.jpg": "first", "sub/page2.png": "second"])
+    defer { try? FileManager.default.removeItem(at: src) }
+    // An extended attribute is what makes `tar` add the `._` member.
+    try #require(try runTool("/usr/bin/xattr", ["-w", "com.example.note", "hello", src.path + "/page1.jpg"]) == 0)
+    try #require(try runTool("/usr/bin/xattr", ["-w", "com.example.note", "hello", src.path + "/sub/page2.png"]) == 0)
+    let cbt = tempPath(extension: "cbt")
+    defer { try? FileManager.default.removeItem(atPath: cbt) }
+    try #require(try runTool("/usr/bin/tar", ["-cf", cbt, "-C", src.path, "page1.jpg", "sub"]) == 0)
+
+    let comic = try ComicBook.load(cbt)
+    let entryNames = try CBT(path: cbt).entries().map(\.path).sorted()
+    let pageNames = try comic.pages().map(\.path).sorted()
+    withKnownIssue("AppleDouble `._` members are listed as entries", isIntermittent: true) {
+      #expect(entryNames == ["page1.jpg", "sub/page2.png"])
+    }
+    withKnownIssue("AppleDouble `._` members count as pages", isIntermittent: true) {
+      #expect(pageNames == ["page1.jpg", "sub/page2.png"])
+    }
+
+    let destination = tempPath(extension: "cb")
+    defer { try? FileManager.default.removeItem(atPath: destination) }
+    _ = try comic.extract(options: ComicBook.ExtractOptions(to: destination))
+    let extractedHidden = FileManager.default.fileExists(atPath: destination + "/._page1.jpg")
+    withKnownIssue("AppleDouble `._` members are extracted as files", isIntermittent: true) {
+      #expect(!extractedHidden)
+    }
+  }
+
   @Test func testSystemTarReadsTheCbtWeWrite() throws {
     let src = try makeFixtureDirectory(["page1.jpg": "first", "sub/page2.png": "second", "ComicInfo.xml": "<ComicInfo/>"])
     defer { try? FileManager.default.removeItem(at: src) }
