@@ -25,7 +25,9 @@ struct PLzmaArchive {
     for index in 0..<count {
       let item = try decoder.item(at: index)
       guard !item.isDir else { continue }
-      entries.append(ComicBook.Entry(path: try item.path().description))
+      let itemPath = try item.path().description
+      guard !ComicBook.isMacOSMetadata(itemPath) else { continue }
+      entries.append(ComicBook.Entry(path: itemPath))
     }
     return entries
   }
@@ -85,7 +87,7 @@ struct PLzmaArchive {
         at: URL(fileURLWithPath: destination), withIntermediateDirectories: true)
       let (decoder, _) = try openDecoder()
       _ = try decoder.extract(to: try Path(destination), itemsFullPath: true)
-      if options.imagesOnly { try removeNonImages(in: destination) }
+      try removeUnwanted(in: destination, imagesOnly: options.imagesOnly)
     } catch let error as ComicBookError {
       throw error
     } catch {
@@ -108,15 +110,21 @@ struct PLzmaArchive {
     }
   }
 
-  private func removeNonImages(in directory: String) throws {
+  /// Delete what should not have been extracted.
+  ///
+  /// That is macOS metadata always and, with `imagesOnly`, every file that is not an image. The
+  /// whole archive is extracted in one go, so this tidies up afterwards.
+  private func removeUnwanted(in directory: String, imagesOnly: Bool) throws {
     let fileManager = FileManager.default
-    guard
-      let enumerator = fileManager.enumerator(
-        at: URL(fileURLWithPath: directory), includingPropertiesForKeys: [.isDirectoryKey])
-    else { return }
-    for case let fileURL as URL in enumerator {
-      let isDirectory = (try? fileURL.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
-      if !isDirectory && !ComicBook.isImageFile(fileURL.lastPathComponent) {
+    let directoryURL = URL(fileURLWithPath: directory)
+    // Listed by path: listing by URL leaves out the `._` files this is here to remove.
+    for relative in try fileManager.subpathsOfDirectory(atPath: directory) {
+      let fileURL = directoryURL.appendingPathComponent(relative)
+      var isDirectory: ObjCBool = false
+      guard fileManager.fileExists(atPath: fileURL.path, isDirectory: &isDirectory) else { continue }
+
+      let isUnwantedFile = imagesOnly && !isDirectory.boolValue && !ComicBook.isImageFile(relative)
+      if ComicBook.isMacOSMetadata(relative) || isUnwantedFile {
         try? fileManager.removeItem(at: fileURL)
       }
     }

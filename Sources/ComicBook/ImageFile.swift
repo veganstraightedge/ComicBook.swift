@@ -21,6 +21,15 @@ extension ComicBook {
     return imageExtensions.contains(ext)
   }
 
+  /// True if `path` is something macOS added to an archive, not part of the comic.
+  ///
+  /// That is an AppleDouble member (`._page1.jpg`, which `tar` writes beside a file that has
+  /// extended attributes) or anything in a `__MACOSX` folder (where Finder's Compress puts the
+  /// same data). Such members are never listed, counted as pages, or extracted.
+  static func isMacOSMetadata(_ path: String) -> Bool {
+    path.split(separator: "/").contains { $0 == "__MACOSX" || $0.hasPrefix("._") }
+  }
+
   /// True if the given file name is a ComicInfo.xml / MetronInfo.xml sidecar (case-insensitive).
   static func isInfoFile(_ name: String) -> Bool {
     infoFilenames.contains(name.lowercased())
