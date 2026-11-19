@@ -136,15 +136,22 @@ public struct ComicBook {
       return (path as NSString).pathExtension.lowercased() == "cb" ? .cb : .folder
     }
 
+    // The extension says whether this is a comic at all; a file with any other extension is refused,
+    // whatever it contains.
+    let named: ArchiveType
     switch (path as NSString).pathExtension.lowercased() {
-    case "cbz": return .cbz
-    case "cb7": return .cb7
-    case "cbt": return .cbt
-    case "cbr": return .cbr
-    case "cba": return .cba
-    case "pdf": return .pdf
+    case "cbz": named = .cbz
+    case "cb7": named = .cb7
+    case "cbt": named = .cbt
+    case "cbr": named = .cbr
+    case "cba": named = .cba
+    case "pdf": named = .pdf
     case let other: throw ComicBookError.unsupportedFileType(".\(other)")
     }
+
+    // What the file contains says which format it is: comics are often mislabelled (a RAR named
+    // `.cbz`). The extension decides only when the contents are not recognised.
+    return ArchiveType.detecting(contentsOfFileAt: path) ?? named
   }
 
   // MARK: - Path helpers
