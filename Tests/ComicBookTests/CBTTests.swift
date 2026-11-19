@@ -37,11 +37,9 @@ struct CBTTests {
     #expect(try ComicBook.load(cbtPath).info()?.title == "Tarred")
   }
 
-  /// A known bug, kept here so it is not forgotten: macOS `tar` stores a file's extended attributes
-  /// as a hidden `._name` member beside it, and we treat those members as files and pages.
+  /// AppleDouble members are not files or pages of the comic.
   ///
-  /// When this is fixed the known-issue markers start failing; remove them then. They are marked
-  /// intermittent because whether `tar` writes the members depends on the system it runs on.
+  /// macOS `tar` stores a file's extended attributes as a hidden `._name` member beside it.
   @Test func testMacOSTarAppleDoubleMembersAreNotPages() throws {
     let src = try makeFixtureDirectory(["page1.jpg": "first", "sub/page2.png": "second"])
     defer { try? FileManager.default.removeItem(at: src) }
@@ -55,20 +53,15 @@ struct CBTTests {
     let comic = try ComicBook.load(cbt)
     let entryNames = try CBT(path: cbt).entries().map(\.path).sorted()
     let pageNames = try comic.pages().map(\.path).sorted()
-    withKnownIssue("AppleDouble `._` members are listed as entries", isIntermittent: true) {
-      #expect(entryNames == ["page1.jpg", "sub/page2.png"])
-    }
-    withKnownIssue("AppleDouble `._` members count as pages", isIntermittent: true) {
-      #expect(pageNames == ["page1.jpg", "sub/page2.png"])
-    }
+    #expect(entryNames == ["page1.jpg", "sub/page2.png"])
+    #expect(pageNames == ["page1.jpg", "sub/page2.png"])
 
     let destination = tempPath(extension: "cb")
     defer { try? FileManager.default.removeItem(atPath: destination) }
     _ = try comic.extract(options: ComicBook.ExtractOptions(to: destination))
-    let extractedHidden = FileManager.default.fileExists(atPath: destination + "/._page1.jpg")
-    withKnownIssue("AppleDouble `._` members are extracted as files", isIntermittent: true) {
-      #expect(!extractedHidden)
-    }
+    #expect(!FileManager.default.fileExists(atPath: destination + "/._page1.jpg"))
+    #expect(!FileManager.default.fileExists(atPath: destination + "/sub/._page2.png"))
+    #expect(FileManager.default.fileExists(atPath: destination + "/sub/page2.png"))
   }
 
   @Test func testSystemTarReadsTheCbtWeWrite() throws {

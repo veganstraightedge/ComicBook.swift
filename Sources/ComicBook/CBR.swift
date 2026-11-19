@@ -75,7 +75,7 @@ struct CBR: ComicBookAdapter {
 
   private func fileEntries(in archive: Unrar.Archive) throws -> [Unrar.Entry] {
     do {
-      return try archive.entries().filter { !$0.directory }
+      return try archive.entries().filter { !$0.directory && !ComicBook.isMacOSMetadata($0.fileName) }
     } catch {
       throw ComicBookError.extractionError("Could not list '\(path)': \(error)")
     }

@@ -15,7 +15,7 @@ struct CBZ: ComicBookAdapter {
   func entries() throws -> [ComicBook.Entry] {
     let archive = try openForReading()
     var entries: [ComicBook.Entry] = []
-    for entry in archive where entry.type == .file {
+    for entry in archive where entry.type == .file && !ComicBook.isMacOSMetadata(entry.path) {
       entries.append(ComicBook.Entry(path: entry.path))
     }
     return entries
@@ -66,7 +66,7 @@ struct CBZ: ComicBookAdapter {
     do {
       let archive = try openForReading()
       try FileManager.default.createDirectory(at: destinationURL, withIntermediateDirectories: true)
-      for entry in archive where entry.type == .file {
+      for entry in archive where entry.type == .file && !ComicBook.isMacOSMetadata(entry.path) {
         if options.imagesOnly && !ComicBook.isImageFile(entry.path) { continue }
         let fileURL = destinationURL.appendingPathComponent(entry.path)
         try FileManager.default.createDirectory(

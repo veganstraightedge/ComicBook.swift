@@ -10,7 +10,8 @@ import Foundation
 struct CB: ComicBookAdapter {
   let path: String
 
-  /// Every file in the folder, as Entries with folder-relative paths (hidden files skipped).
+  /// Every file in the folder, as Entries with folder-relative paths (hidden files and macOS
+  /// metadata skipped).
   func entries() throws -> [ComicBook.Entry] {
     let fileManager = FileManager.default
     let baseURL = URL(fileURLWithPath: path).resolvingSymlinksInPath()
@@ -27,6 +28,7 @@ struct CB: ComicBookAdapter {
       let isDirectory = (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
       guard !isDirectory else { continue }
       let relative = url.resolvingSymlinksInPath().pathComponents.dropFirst(baseComponentCount).joined(separator: "/")
+      guard !ComicBook.isMacOSMetadata(relative) else { continue }
       entries.append(ComicBook.Entry(path: relative))
     }
     return entries
