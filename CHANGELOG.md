@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-18
+
 ### Changed
 
+- **ComicInfo.swift 1.7.0** (was 1.5.0) is the minimum version.
 - **`.cbt` is read and written with PLzmaSDK**, the library already used for `.cb7`. A `.cbt` is now read from disk instead of being loaded into memory whole. The files written are ordinary TAR archives, as before.
 
 ### Removed
