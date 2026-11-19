@@ -30,7 +30,7 @@ Dev-process and architecture notes for ComicBook.swift. Mirrors ComicInfo.swift'
 | Format      | Library                                         | Notes                                  |
 | ----------- | ----------------------------------------------- | -------------------------------------- |
 | CBZ         | ZIPFoundation                                   | read + write                           |
-| CBT         | SWCompression (TAR)                             | read + write                           |
+| CBT         | PLzmaSDK (our fork; see `doc/plzmasdk-fork.md`) | read + write, in-process, uncompressed |
 | CB7         | PLzmaSDK (our fork; see `doc/plzmasdk-fork.md`) | read + write, in-process               |
 | CBR         | Unrar.swift (RARLAB unrar)                      | read-only, in-process                  |
 | PDF         | CoreGraphics / ImageIO                          | extract-only, native                   |

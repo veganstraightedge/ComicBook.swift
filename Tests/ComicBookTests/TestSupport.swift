@@ -32,3 +32,17 @@ func runTool(_ launchPath: String, _ arguments: [String], cwd: URL? = nil) throw
   process.waitUntilExit()
   return process.terminationStatus
 }
+
+/// Run a command-line tool and return what it printed (used to check our archives with other tools).
+func toolOutput(_ launchPath: String, _ arguments: [String]) throws -> String {
+  let process = Process()
+  process.executableURL = URL(fileURLWithPath: launchPath)
+  process.arguments = arguments
+  let pipe = Pipe()
+  process.standardOutput = pipe
+  process.standardError = FileHandle.nullDevice
+  try process.run()
+  let data = pipe.fileHandleForReading.readDataToEndOfFile()
+  process.waitUntilExit()
+  return String(data: data, encoding: .utf8) ?? ""
+}
