@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-11-19
+
 ### Added
 
 - **Page file name template for `arrangePages`**: `arrangePages(_:template:)` names the page files from a template such as `{series}_{number:3}_{page:4}`, filled in from the folder's `ComicInfo.xml` by [ComicInfo.swift](https://github.com/veganstraightedge/ComicInfo.swift)'s `Issue.pageFilename`. Without one, pages are named `page_001…` as before; that default is `ComicBook.defaultPageFilenameTemplate`.
