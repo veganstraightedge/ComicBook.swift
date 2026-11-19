@@ -42,6 +42,9 @@ Dev-process and architecture notes for ComicBook.swift. Mirrors ComicInfo.swift'
 - Archiving includes **all files by default** (`ArchiveOptions.contents`: `.all` / `.images` / `.imagesAndInfo`); extraction is lossless unless `ExtractOptions.imagesOnly`.
 - Default extract dir = `<basename>.cb`; default archive ext = `.cbz`.
 - Page `path`: archive → entry name; `.cb` or plain folder → relative to the folder. Pages are ordered by full path.
+- Archive type detection is content-based: the file's leading bytes decide the format, so a RAR
+  named `.cbz` is read as a `.cbr`. The extension only gates which files count as comics, and breaks
+  the tie when the bytes are not recognised. (The gem goes by extension alone.)
 - Image detection is extension-based, case-insensitive: `.jpg .jpeg .png .gif .bmp .webp`.
 
 ## Status

@@ -61,6 +61,12 @@ try extracted.archive(options: .init(to: "Issue1.cbz"))
 
 Pages are renumbered `page_001…` in the given order, page images left out are deleted, and a `ComicInfo.xml` in the folder has its `<Page>` entries and `PageCount` updated to match.
 
+A comic's `type` comes from what the file contains, not its extension, so a mislabelled archive still opens:
+
+```swift
+try ComicBook.load("Actually-a-RAR.cbz").type         // .cbr
+```
+
 Which formats can be opened or written is public, as is what counts as a page image:
 
 ```swift
