@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-11-18
+
 ### Fixed
 
 - **Mislabelled archives now open**: a comic's type is told from the bytes the file starts with, so a RAR named `.cbz` (common in the wild) loads with `type == .cbr` and is read as one. ZIP, RAR, 7-Zip, TAR, PDF and ACE are recognised. The extension still decides which files are comics at all (a `.zip` is refused as before) and is used when the contents are not recognised.
