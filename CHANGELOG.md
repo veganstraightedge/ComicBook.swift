@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **`.cbt` is read and written with PLzmaSDK**, the library already used for `.cb7`. A `.cbt` is now read from disk instead of being loaded into memory whole. The files written are ordinary TAR archives, as before.
+
+### Removed
+
+- **SWCompression dependency** (and BitByteData, which came with it). Nothing else used it.
+
 ## [0.6.0] - 2026-11-16
 
 ### Added

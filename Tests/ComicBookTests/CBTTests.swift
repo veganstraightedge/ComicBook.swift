@@ -36,4 +36,64 @@ struct CBTTests {
 
     #expect(try ComicBook.load(cbtPath).info()?.title == "Tarred")
   }
+
+  @Test func testSystemTarReadsTheCbtWeWrite() throws {
+    let src = try makeFixtureDirectory(["page1.jpg": "first", "sub/page2.png": "second", "ComicInfo.xml": "<ComicInfo/>"])
+    defer { try? FileManager.default.removeItem(at: src) }
+    let cbt = try ComicBook.load(src.path).archive(options: ComicBook.ArchiveOptions(to: tempPath(extension: "cbt")))
+    defer { try? FileManager.default.removeItem(atPath: cbt) }
+
+    let listing = try toolOutput("/usr/bin/tar", ["-tf", cbt]).split(separator: "\n").map(String.init).sorted()
+    #expect(listing == ["ComicInfo.xml", "page1.jpg", "sub/page2.png"])
+    #expect(try toolOutput("/usr/bin/tar", ["-xOf", cbt, "sub/page2.png"]) == "second")
+  }
+
+  @Test func testLongAndUnicodePathsRoundTrip() throws {
+    // Longer than the 100 characters a classic TAR header holds.
+    let long = String(repeating: "deep-folder-name/", count: 9) + String(repeating: "p", count: 120) + ".jpg"
+    let unicode = "ページ 01 – café.png"
+    let src = try makeFixtureDirectory([long: "long", unicode: "unicode"])
+    defer { try? FileManager.default.removeItem(at: src) }
+    let cbt = try ComicBook.load(src.path).archive(options: ComicBook.ArchiveOptions(to: tempPath(extension: "cbt")))
+    defer { try? FileManager.default.removeItem(atPath: cbt) }
+
+    let paths = try ComicBook.load(cbt).pages().map(\.path)
+    #expect(paths.contains(long))
+    #expect(paths.contains { $0.precomposedStringWithCanonicalMapping == unicode })
+    #expect(try toolOutput("/usr/bin/tar", ["-tf", cbt]).contains(long))
+
+    let destination = tempPath(extension: "cb")
+    defer { try? FileManager.default.removeItem(atPath: destination) }
+    _ = try ComicBook.load(cbt).extract(options: ComicBook.ExtractOptions(to: destination))
+    #expect(try String(contentsOfFile: destination + "/" + long, encoding: .utf8) == "long")
+  }
+
+  @Test func testLargeBinaryAndEmptyFilesRoundTrip() throws {
+    let src = try makeFixtureDirectory(["empty.jpg": ""])
+    defer { try? FileManager.default.removeItem(at: src) }
+    var bytes = Data(count: 3_000_001)
+    for index in bytes.indices { bytes[index] = UInt8(truncatingIfNeeded: index &* 31 &+ index >> 8) }
+    try bytes.write(to: src.appendingPathComponent("big.png"))
+
+    let cbt = try ComicBook.load(src.path).archive(options: ComicBook.ArchiveOptions(to: tempPath(extension: "cbt")))
+    defer { try? FileManager.default.removeItem(atPath: cbt) }
+    let destination = tempPath(extension: "cb")
+    defer { try? FileManager.default.removeItem(atPath: destination) }
+    _ = try ComicBook.load(cbt).extract(options: ComicBook.ExtractOptions(to: destination))
+
+    #expect(try Data(contentsOf: URL(fileURLWithPath: destination + "/big.png")) == bytes)
+    #expect(try Data(contentsOf: URL(fileURLWithPath: destination + "/empty.jpg")).isEmpty)
+  }
+
+  @Test func testImagesOnlyExtractionSkipsOtherFiles() throws {
+    let src = try makeFixtureDirectory(["page1.jpg": "a", "notes.txt": "n", "ComicInfo.xml": "<ComicInfo/>"])
+    defer { try? FileManager.default.removeItem(at: src) }
+    let cbt = try ComicBook.load(src.path).archive(options: ComicBook.ArchiveOptions(to: tempPath(extension: "cbt")))
+    defer { try? FileManager.default.removeItem(atPath: cbt) }
+    let destination = tempPath(extension: "cb")
+    defer { try? FileManager.default.removeItem(atPath: destination) }
+
+    _ = try ComicBook.load(cbt).extract(options: ComicBook.ExtractOptions(to: destination, imagesOnly: true))
+    #expect(try FileManager.default.contentsOfDirectory(atPath: destination) == ["page1.jpg"])
+  }
 }
