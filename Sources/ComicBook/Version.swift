@@ -7,6 +7,6 @@ extension ComicBook {
   /// Version information for the ComicBook.swift.
   public enum Version {
     /// The current version of the ComicBook.swift.
-    public static let current = "0.9.1"
+    public static let current = "0.9.2"
   }
 }
