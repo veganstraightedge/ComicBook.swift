@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Requires [ZIPFoundation](https://github.com/weichsel/ZIPFoundation) 0.9.21 (was 0.9.20).
+
 ## [0.9.1] - 2026-11-19
 
 ### Fixed
